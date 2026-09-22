@@ -1,11 +1,17 @@
 {
-  "hasCompletedOnboarding": true,
   "env": {
     "ANTHROPIC_BASE_URL": "https://9router.tmdsite.my.id/v1",
-    "ANTHROPIC_AUTH_TOKEN": "sk-272e43794d17b03d-dk9sth-9dabb45f",
+    "ANTHROPIC_AUTH_TOKEN": "sk-0701dfeb28e0c4ae-dafstv-d3b0f844",
     "ANTHROPIC_MODEL": "td-normal",
     "ANTHROPIC_DEFAULT_SONNET_MODEL": "td-normal",
     "ANTHROPIC_DEFAULT_OPUS_MODEL": "td-high",
     "ANTHROPIC_DEFAULT_HAIKU_MODEL": "td-simple"
-  }
+  },
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "PowerShell(npm install recharts)"
+    ]
+  },
+  "hasCompletedOnboarding": true
 }
