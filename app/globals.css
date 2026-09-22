@@ -197,7 +197,7 @@
   will-change: transform;
 }
 
-@media  {
+@media {
   .cobee-wave {
     animation: none;
     opacity: 1;
