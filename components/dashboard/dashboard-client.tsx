@@ -79,40 +79,41 @@ export default function DashboardClient({
       />
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,0.8fr)] lg:items-start">
-        <div className="min-w-0 space-y-6">
+        <div className="min-w-0">
           <TrendChart months={monthlyTotals} />
-          <DashboardCard
-            title="Requests by"
-            subtitle={`${periodLabel} · ${filtered.length} completed requests`}
-            action={
-              <label className="flex shrink-0 items-center gap-2 text-[13px] text-muted-foreground">
-                <span className="sr-only">Group requests by</span>
-                <select
-                  id="request-group"
-                  aria-label="Group requests by"
-                  value={groupBy}
-                  onChange={(event) => setGroupBy(event.target.value as "team" | "category")}
-                  className="h-9 rounded-full border border-input bg-background px-3 text-[13px] text-foreground outline-none transition-colors focus:border-ring focus:ring-2 focus:ring-ring/20"
-                >
-                  <option value="team">Team</option>
-                  <option value="category">Category</option>
-                </select>
-              </label>
-            }
-          >
-            <div className="pt-3">
-              {groupBy === "team" ? (
-                <TeamRequestsTable teams={visibleTeams} getSeries={(teamId) => getMonthlyTeamRequests(filtered, teamId, months)} />
-              ) : (
-                <CategoryRequestsTable categories={categories} getSeries={(categoryId) => getMonthlyCategoryRequests(filtered, categoryId, months)} />
-              )}
-            </div>
-          </DashboardCard>
         </div>
         <aside className="min-w-0">
           <MonthlyTotal months={monthlyTotals} />
         </aside>
       </div>
+
+      <DashboardCard
+        title="Requests by"
+        subtitle={`${periodLabel} · ${filtered.length} completed requests`}
+        action={
+          <label className="flex shrink-0 items-center gap-2 text-[13px] text-muted-foreground">
+            <span className="sr-only">Group requests by</span>
+            <select
+              id="request-group"
+              aria-label="Group requests by"
+              value={groupBy}
+              onChange={(event) => setGroupBy(event.target.value as "team" | "category")}
+              className="h-9 rounded-full border border-input bg-background px-3 text-[13px] text-foreground outline-none transition-colors focus:border-ring focus:ring-2 focus:ring-ring/20"
+            >
+              <option value="team">Team</option>
+              <option value="category">Category</option>
+            </select>
+          </label>
+        }
+      >
+        <div className="pt-3">
+          {groupBy === "team" ? (
+            <TeamRequestsTable teams={visibleTeams} getSeries={(teamId) => getMonthlyTeamRequests(filtered, teamId, months)} />
+          ) : (
+            <CategoryRequestsTable categories={categories} getSeries={(categoryId) => getMonthlyCategoryRequests(filtered, categoryId, months)} />
+          )}
+        </div>
+      </DashboardCard>
 
       <RecentRequests requests={getRecentRequests(filtered, 50)} categories={categories} teams={teams} users={users} />
     </div>

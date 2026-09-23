@@ -23,7 +23,7 @@ export default function LoginPage() {
             <span className="pt-2 text-sm font-semibold tracking-tight">Request Wave</span>
           </div>
           <h1 className="mt-10 text-center text-3xl font-medium tracking-tight">Welcome back</h1>
-          <p className="mt-2 text-center text-[15px] text-muted-foreground">Sign in to review your team&apos;s design activity.</p>
+          <p className="mt-2 text-center text-[15px] text-muted-foreground">Sign in to review creative team&apos;s activity.</p>
           <LoginForm />
         </section>
       </div>
