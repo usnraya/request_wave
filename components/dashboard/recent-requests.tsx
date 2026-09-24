@@ -53,7 +53,7 @@ export default function RecentRequests({
                   Team
                 </th>
                 <th scope="col" className="px-3 py-2.5 font-medium">
-                  Category
+                  Work Area
                 </th>
                 <th scope="col" className="px-4 py-2.5 font-medium">
                   Requester

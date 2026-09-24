@@ -8,7 +8,7 @@ export default function DashboardSummary({ requests, teamCount, categoryCount }:
     ["Total requests", getTotalRequests(requests), CheckCircle2, "border-t-primary", "text-primary"],
     ["This month", getRequestsThisMonth(requests), Layers3, "border-t-[#16B1FF]", "text-[#0b8ccc]"],
     ["Teams", teamCount, UsersRound, "border-t-[#FFB400]", "text-[#b47d00]"],
-    ["Categories", categoryCount, Tags, "border-t-[#8A8D93]", "text-secondary"],
+    ["Work Areas", categoryCount, Tags, "border-t-[#8A8D93]", "text-secondary"],
   ] as const;
 
   return (

@@ -18,6 +18,7 @@ export default function RequestsClient({
   requests,
   categories,
   teams,
+  canCreate,
 }: {
   initialFilters: DashboardFilters;
   initialQuery: string;
@@ -25,6 +26,7 @@ export default function RequestsClient({
   requests: Request[];
   categories: Category[];
   teams: Team[];
+  canCreate: boolean;
 }) {
   const router = useRouter();
   const selected = initialFilters.category;
@@ -69,12 +71,14 @@ export default function RequestsClient({
         <div>
           <h1 className="text-3xl font-medium tracking-tight text-primary">Requests</h1>
           <p className="mt-2 text-[15px] text-muted-foreground">
-            Browse completed design work by category and team.
+            Browse completed design work by work area and team.
           </p>
         </div>
-        <Link href="/requests/new" className="inline-flex h-10 items-center rounded-full bg-primary px-4 text-[15px] font-medium text-primary-foreground transition-colors hover:bg-[#108513] focus-visible:ring-2 focus-visible:ring-ring">
-          New request
-        </Link>
+        {canCreate && (
+          <Link href="/requests/new" className="inline-flex h-10 items-center rounded-full bg-primary px-4 text-[15px] font-medium text-primary-foreground transition-colors hover:bg-[#108513] focus-visible:ring-2 focus-visible:ring-ring">
+            New request
+          </Link>
+        )}
       </header>
       <div className="mt-6 flex flex-wrap gap-2">
         <input

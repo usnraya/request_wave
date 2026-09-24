@@ -11,7 +11,7 @@ export default async function ManagePage() {
       <header className="border-b border-border pb-6">
         <h1 className="text-3xl font-medium tracking-tight">Manage data</h1>
         <p className="mt-2 text-[15px] text-muted-foreground">
-          Manage people, access, and request categories.
+          Manage people, access, and request work areas.
         </p>
       </header>
       <p className="mt-6 rounded-2xl border border-[#ffb400]/30 bg-[#ffb400]/10 p-4 text-[13px] text-foreground">
@@ -24,9 +24,9 @@ export default async function ManagePage() {
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">
               Request setup
             </p>
-            <h2 className="mt-1 text-xl font-semibold tracking-tight">Categories</h2>
+            <h2 className="mt-1 text-xl font-semibold tracking-tight">Work Areas</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Add, rename, or remove the categories available across requests.
+              Add, rename, or remove the work areas available across requests.
             </p>
           </header>
           <CategoriesManager categories={categories} />

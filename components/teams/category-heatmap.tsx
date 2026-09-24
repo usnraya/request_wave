@@ -42,13 +42,13 @@ export default function CategoryHeatmap({
   return (
     <DashboardCard
       title="Monthly Requests Heatmap"
-      subtitle={`${categories.length} categories across 12 months`}
+      subtitle={`${categories.length} work areas across 12 months`}
       action={<Legend />}
     >
       <div className="overflow-x-auto rounded-lg border border-border/80">
         <table className="w-full min-w-[900px] border-collapse text-sm">
           <caption className="sr-only">
-            Completed requests by category and month. Darker green means more
+            Completed requests by work area and month. Darker green means more
             requests.
           </caption>
           <thead>
@@ -57,7 +57,7 @@ export default function CategoryHeatmap({
                 scope="col"
                 className="sticky left-0 z-10 w-44 bg-muted px-4 py-3 font-medium"
               >
-                Category
+                Work Area
               </th>
               {columns.map((month) => (
                 <th

@@ -101,7 +101,7 @@ export default function DashboardClient({
               className="h-9 rounded-full border border-input bg-background px-3 text-[13px] text-foreground outline-none transition-colors focus:border-ring focus:ring-2 focus:ring-ring/20"
             >
               <option value="team">Team</option>
-              <option value="category">Category</option>
+              <option value="category">Work Area</option>
             </select>
           </label>
         }

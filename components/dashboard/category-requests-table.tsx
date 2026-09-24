@@ -16,14 +16,14 @@ export default function CategoryRequestsTable({
   return (
     <div className="overflow-x-auto rounded-xl border border-border bg-card">
       <table className="w-full min-w-[900px] border-collapse text-[13px]">
-        <caption className="sr-only">Requests by category and period</caption>
+        <caption className="sr-only">Requests by work area and period</caption>
         <thead>
           <tr className="border-b border-border bg-muted/60 text-left text-xs text-muted-foreground">
             <th
               scope="col"
               className="sticky left-0 z-20 w-40 border-r border-border bg-muted/90 px-4 py-3 font-medium shadow-[2px_0_4px_-2px_rgba(0,0,0,0.15)]"
             >
-              Category
+              Work Area
             </th>
             {columns.map((month) => (
               <th

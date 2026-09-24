@@ -1,5 +1,6 @@
 import RequestsClient from "@/components/requests/requests-client";
 import { getCategories, getRequests, getTeams } from "@/lib/data";
+import { getCurrentUser } from "@/lib/permissions";
 import type { DashboardFilters } from "@/types/dashboard";
 
 type RawSearchParams = Record<string, string | string[] | undefined>;
@@ -10,10 +11,11 @@ export default async function RequestsPage({
   searchParams,
 }: PageProps<"/requests">) {
   const params: RawSearchParams = await searchParams;
-  const [requests, loadedCategories, teams] = await Promise.all([
+  const [requests, loadedCategories, teams, user] = await Promise.all([
     getRequests(),
     getCategories(),
     getTeams(),
+    getCurrentUser(),
   ]);
   const filters: DashboardFilters = {
     year: first(params.year),
@@ -30,6 +32,7 @@ export default async function RequestsPage({
       requests={requests}
       categories={loadedCategories}
       teams={teams}
+      canCreate={user?.role === "PM"}
     />
   );
 }

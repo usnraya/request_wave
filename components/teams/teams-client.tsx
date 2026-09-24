@@ -22,7 +22,7 @@ export default function TeamsClient({ requests, categories, teams }: { requests:
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-border pb-6">
         <div>
           <h1 className="text-3xl font-medium tracking-tight">Teams</h1>
-          <p className="mt-2 text-[15px] text-muted-foreground">Compare completed design activity by category.</p>
+          <p className="mt-2 text-[15px] text-muted-foreground">Compare completed design activity by work area.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <label className="sr-only" htmlFor="teams-year">Year</label>

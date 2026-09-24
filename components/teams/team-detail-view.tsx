@@ -24,7 +24,7 @@ export default function TeamDetailView({ team, requests, categories, users }: { 
       <div className="mt-6 overflow-x-auto rounded-2xl border border-border bg-card">
         <table className="w-full min-w-[680px] text-[13px]">
           <caption className="sr-only">Requests for {team.name}</caption>
-          <thead><tr className="border-b border-border bg-muted/60 text-left text-xs text-muted-foreground"><th className="px-4 py-3 font-medium">Notion ID</th><th className="px-4 py-3 font-medium">Request</th><th className="px-4 py-3 font-medium">Category</th><th className="px-4 py-3 font-medium">Requester</th></tr></thead>
+          <thead><tr className="border-b border-border bg-muted/60 text-left text-xs text-muted-foreground"><th className="px-4 py-3 font-medium">Notion ID</th><th className="px-4 py-3 font-medium">Request</th><th className="px-4 py-3 font-medium">Work Area</th><th className="px-4 py-3 font-medium">Requester</th></tr></thead>
           <tbody>
             {teamRequests.map((request) => <tr key={request.id} className="border-b border-border last:border-0 hover:bg-primary/[0.03]">
               <td className="whitespace-nowrap px-4 py-3"><label className="sr-only" htmlFor={`notion-${request.id}`}>Notion ID for {request.id}</label><input id={`notion-${request.id}`} value={notionIds[request.id] ?? ""} onChange={(event) => setNotionIds((current) => ({ ...current, [request.id]: event.target.value }))} placeholder="Enter Notion ID" className="h-9 w-40 rounded-xl border border-input bg-background px-2.5 font-mono text-xs outline-none focus:border-ring focus:ring-2 focus:ring-ring/20" /></td>

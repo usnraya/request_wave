@@ -91,9 +91,9 @@ export default function BulkRequestForm({
           </select>
         </label>
         <label className="block text-sm font-medium">
-          Category
+          Work Area
           <select name="categoryId" required className={selectClass}>
-            <option value="">Choose a category</option>
+            <option value="">Choose a work area</option>
             {categories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}

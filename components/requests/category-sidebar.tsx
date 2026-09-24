@@ -19,7 +19,7 @@ export default function CategorySidebar({
   const all = [{ id: "", name: "All Requests" }, ...categories];
   return (
     <nav
-      aria-label="Request categories"
+      aria-label="Request work areas"
       className="-mx-1 overflow-x-auto px-1 lg:mx-0 lg:px-0"
     >
       <div className="flex min-w-max gap-1 lg:block lg:min-w-0 lg:space-y-1">

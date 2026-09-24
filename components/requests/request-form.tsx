@@ -26,7 +26,7 @@ export default function RequestForm({ request, teams, categories, users }: { req
         <Field label="Request code" name="requestCode" defaultValue={request.requestCode} />
         <Field label="Notion ID" name="notionId" defaultValue={request.notionId} required={false} />
         <SelectField label="Team" name="teamId" defaultValue={request.teamId}><option value="">Select team</option>{teams.map((team) => <option key={team.id} value={team.id}>{team.name}</option>)}</SelectField>
-        <SelectField label="Category" name="categoryId" defaultValue={request.categoryId}><option value="">Select category</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</SelectField>
+        <SelectField label="Work Area" name="categoryId" defaultValue={request.categoryId}><option value="">Select work area</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</SelectField>
         <SelectField label="Requester" name="requesterId" defaultValue={request.requesterId}><option value="">Select requester</option>{users.map((user) => <option key={user.id} value={user.id}>{user.name}</option>)}</SelectField>
         <SelectField label="Designer" name="designerId" defaultValue={request.designerId ?? ""} required={false}><option value="">Unassigned</option>{users.map((user) => <option key={user.id} value={user.id}>{user.name}</option>)}</SelectField>
       </div>

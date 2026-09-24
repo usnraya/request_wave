@@ -56,8 +56,8 @@ function revalidateManagement() {
 
 function categoryName(formData: FormData): string {
   const name = value(formData, "name");
-  if (!name) throw new Error("Category name is required");
-  if (name.length > 80) throw new Error("Category name must be 80 characters or fewer");
+  if (!name) throw new Error("Work area name is required");
+  if (name.length > 80) throw new Error("Work area name must be 80 characters or fewer");
   return name;
 }
 
@@ -68,7 +68,7 @@ function categoryId(name: string): string {
 
 function categoryError(error: { code?: string; message: string }): Error {
   return error.code === "23505"
-    ? new Error("A category with this name already exists")
+    ? new Error("A work area with this name already exists")
     : new Error(error.message);
 }
 
@@ -170,7 +170,7 @@ export async function createCategory(formData: FormData) {
 export async function updateCategory(formData: FormData) {
   await requireRole("PM");
   const id = value(formData, "id");
-  if (!id) throw new Error("Category ID is required");
+  if (!id) throw new Error("Work area ID is required");
   const name = categoryName(formData);
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.from("categories").update({ name }).eq("id", id);
@@ -181,14 +181,14 @@ export async function updateCategory(formData: FormData) {
 export async function deleteCategory(formData: FormData) {
   await requireRole("PM");
   const id = value(formData, "id");
-  if (!id) throw new Error("Category ID is required");
+  if (!id) throw new Error("Work area ID is required");
   const supabase = await createSupabaseServerClient();
   const { count, error: requestError } = await supabase
     .from("requests")
     .select("id", { count: "exact", head: true })
     .eq("category_id", id);
   if (requestError) throw new Error(requestError.message);
-  if (count) throw new Error("This category is referenced by existing requests");
+  if (count) throw new Error("This work area is referenced by existing requests");
   const { error } = await supabase.from("categories").delete().eq("id", id);
   if (error) throw new Error(error.message);
   revalidateManagement();
