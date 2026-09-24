@@ -72,6 +72,29 @@ function categoryError(error: { code?: string; message: string }): Error {
     : new Error(error.message);
 }
 
+function teamName(formData: FormData): string {
+  const name = value(formData, "name");
+  if (!name) throw new Error("Team name is required");
+  if (name.length > 80) throw new Error("Team name must be 80 characters or fewer");
+  return name;
+}
+
+function teamId(name: string): string {
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "team";
+  return `${slug}-${crypto.randomUUID().slice(0, 8)}`;
+}
+
+function teamShortName(name: string): string {
+  const short = name.toUpperCase().replace(/[^A-Z0-9]+/g, "").slice(0, 4);
+  return short || "TEAM";
+}
+
+function teamError(error: { code?: string; message: string }): Error {
+  return error.code === "23505"
+    ? new Error("A team with this name already exists")
+    : new Error(error.message);
+}
+
 export async function createManagedUser(formData: FormData) {
   await requireRole("PM");
   const username = parseUsername(value(formData, "username"));
@@ -190,6 +213,49 @@ export async function deleteCategory(formData: FormData) {
   if (requestError) throw new Error(requestError.message);
   if (count) throw new Error("This work area is referenced by existing requests");
   const { error } = await supabase.from("categories").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidateManagement();
+}
+
+export async function createTeam(formData: FormData) {
+  await requireRole("PM");
+  const name = teamName(formData);
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.from("teams").insert({
+    id: teamId(name),
+    name,
+    short_name: teamShortName(name),
+  });
+  if (error) throw teamError(error);
+  revalidateManagement();
+}
+
+export async function updateTeam(formData: FormData) {
+  await requireRole("PM");
+  const id = value(formData, "id");
+  if (!id) throw new Error("Team ID is required");
+  const name = teamName(formData);
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase
+    .from("teams")
+    .update({ name, short_name: teamShortName(name) })
+    .eq("id", id);
+  if (error) throw teamError(error);
+  revalidateManagement();
+}
+
+export async function deleteTeam(formData: FormData) {
+  await requireRole("PM");
+  const id = value(formData, "id");
+  if (!id) throw new Error("Team ID is required");
+  const supabase = await createSupabaseServerClient();
+  const { count, error: requestError } = await supabase
+    .from("requests")
+    .select("id", { count: "exact", head: true })
+    .eq("team_id", id);
+  if (requestError) throw new Error(requestError.message);
+  if (count) throw new Error("This team is referenced by existing requests");
+  const { error } = await supabase.from("teams").delete().eq("id", id);
   if (error) throw new Error(error.message);
   revalidateManagement();
 }
