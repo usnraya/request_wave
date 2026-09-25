@@ -1,15 +1,18 @@
 import type { Request } from "@/types/request";
 import type { Team } from "@/types/team";
 import type { Category } from "@/types/category";
+import RequestActions from "./request-actions";
 
 export default function RequestCard({
   request,
   categories,
   teams,
+  canManage,
 }: {
   request: Request;
   categories: Category[];
   teams: Team[];
+  canManage: boolean;
 }) {
   const category = categories.find((item) => item.id === request.categoryId);
   const team = teams.find((item) => item.id === request.teamId);
@@ -20,7 +23,10 @@ export default function RequestCard({
           <p className="font-mono text-xs text-muted-foreground">{request.notionId || request.requestCode}</p>
           <p className="mt-1 text-[15px] font-medium">{request.title}</p>
         </div>
-        <span className="shrink-0 rounded-full bg-[#16B1FF]/15 px-2.5 py-1 text-xs font-medium text-[#0a6ea3] dark:text-[#7fd4ff]">{category?.name ?? "Uncategorized"}</span>
+        <div className="flex items-center gap-2">
+          <span className="shrink-0 rounded-full bg-[#16B1FF]/15 px-2.5 py-1 text-xs font-medium text-[#0a6ea3] dark:text-[#7fd4ff]">{category?.name ?? "Uncategorized"}</span>
+          {canManage && <RequestActions requestId={request.id} title={request.title} />}
+        </div>
       </div>
       <dl className="mt-4 border-t border-border pt-4 text-[13px]">
         <div>

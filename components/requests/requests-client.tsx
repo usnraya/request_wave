@@ -122,6 +122,7 @@ export default function RequestsClient({
                 request={request}
                 categories={categories}
                 teams={teams}
+                canManage={canCreate}
               />
             ))
           ) : (

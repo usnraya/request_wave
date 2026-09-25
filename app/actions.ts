@@ -155,3 +155,15 @@ export async function updateRequest(formData: FormData) {
   revalidatePath("/teams");
   redirect("/requests");
 }
+
+export async function deleteRequest(formData: FormData) {
+  await requireRole("PM");
+  const id = text(formData, "id");
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.from("requests").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidatePath("/dashboard");
+  revalidatePath("/requests");
+  revalidatePath("/teams");
+  redirect("/requests");
+}
