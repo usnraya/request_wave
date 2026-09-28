@@ -23,6 +23,7 @@ import {
   getMonthlyTeamRequests,
   getRecentRequests,
   getTotalMonthlyRequests,
+  getTotalOutputs,
 } from "@/lib/dashboard-utils";
 import { monthKey, today } from "@/lib/date-utils";
 
@@ -88,8 +89,8 @@ export default function DashboardClient({
       </div>
 
       <DashboardCard
-        title="Requests by"
-        subtitle={`${periodLabel} · ${filtered.length} completed requests`}
+        title="Outputs by"
+        subtitle={`${periodLabel} · ${getTotalOutputs(filtered)} completed outputs`}
         action={
           <label className="flex shrink-0 items-center gap-2 text-[13px] text-muted-foreground">
             <span className="sr-only">Group requests by</span>

@@ -19,27 +19,59 @@ assert.throws(() => dateForMonth("", now), /Invalid month/, "empty month");
 
 // parseBulkRows
 assert.deepEqual(
-  parseBulkRows([" A ", "", "B"], [" n1 ", "", "n2"]),
+  parseBulkRows([" A ", "", "B"], [" n1 ", "", "n2"], [" 2 ", "", "1"]),
   [
-    { title: "A", notionId: "n1" },
-    { title: "B", notionId: "n2" },
+    { title: "A", notionId: "n1", outputCount: 2 },
+    { title: "B", notionId: "n2", outputCount: 1 },
   ],
-  "trims values and drops fully blank rows",
+  "trims values, drops fully blank rows, parses outputs",
 );
 assert.throws(
-  () => parseBulkRows(["A", "B"], ["n1", ""]),
+  () => parseBulkRows(["A", "B"], ["n1", ""], ["1", "1"]),
   /Notion ID is required on row 2/,
   "row number matches the form",
 );
 assert.throws(
-  () => parseBulkRows(["A", "", "C"], ["n1", "n2", "n3"]),
+  () => parseBulkRows(["A", "", "C"], ["n1", "n2", "n3"], ["1", "1", "1"]),
   /Title is required on row 2/,
   "notionId without title keeps its original row number",
 );
-assert.throws(() => parseBulkRows([], []), /at least one/, "no rows");
-assert.throws(() => parseBulkRows(["", "  "], ["", ""]), /at least one/, "all blank");
+assert.throws(() => parseBulkRows([], [], []), /at least one/, "no rows");
+assert.throws(() => parseBulkRows(["", "  "], ["", ""], ["", ""]), /at least one/, "all blank");
 const many = Array.from({ length: maxBulkRows + 1 }, (_, i) => `t${i}`);
-assert.throws(() => parseBulkRows(many, many), /at most 50/, "over the cap");
-assert.equal(parseBulkRows(many.slice(1), many.slice(1)).length, maxBulkRows, "at the cap");
+const manyOutputs = many.map(() => "1");
+assert.throws(() => parseBulkRows(many, many, manyOutputs), /at most 50/, "over the cap");
+assert.equal(
+  parseBulkRows(many.slice(1), many.slice(1), manyOutputs.slice(1)).length,
+  maxBulkRows,
+  "at the cap",
+);
+
+// outputCount validation
+assert.throws(
+  () => parseBulkRows(["A"], ["n1"], ["0"]),
+  /Outputs must be a positive whole number on row 1/,
+  "zero rejected",
+);
+assert.throws(
+  () => parseBulkRows(["A"], ["n1"], ["-1"]),
+  /Outputs must be a positive whole number on row 1/,
+  "negative rejected",
+);
+assert.throws(
+  () => parseBulkRows(["A"], ["n1"], ["1.5"]),
+  /Outputs must be a positive whole number on row 1/,
+  "decimal rejected",
+);
+assert.throws(
+  () => parseBulkRows(["A"], ["n1"], [""]),
+  /Outputs must be a positive whole number on row 1/,
+  "missing rejected",
+);
+assert.throws(
+  () => parseBulkRows(["A"], ["n1"], ["abc"]),
+  /Outputs must be a positive whole number on row 1/,
+  "non-numeric rejected",
+);
 
 console.log("bulk-requests: OK");

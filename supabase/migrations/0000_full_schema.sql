@@ -39,6 +39,7 @@ create table if not exists public.requests (
   status text not null check (status in ('new', 'in_progress', 'waiting_feedback', 'revision', 'done', 'cancelled')),
   estimated_hours numeric not null check (estimated_hours >= 0),
   actual_hours numeric check (actual_hours >= 0),
+  output_count integer not null default 1 check (output_count >= 1),
   description text,
   figma_url text,
   drive_url text,

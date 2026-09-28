@@ -25,15 +25,15 @@ export default function TrendChart({ months }: { months: MonthPoint[] }) {
 
   return (
     <DashboardCard
-      title="Requests Trend"
-      subtitle={`All teams · ${total} requests total · avg ${avg}/month`}
+      title="Outputs Trend"
+      subtitle={`All teams · ${total} outputs total · avg ${avg}/month`}
     >
       <div className="min-h-[220px] overflow-x-auto">
         <svg
         viewBox={`0 0 ${width} ${height}`}
         className="h-[220px] min-w-[680px] w-full"
         role="img"
-        aria-label="Total requests per month"
+        aria-label="Total outputs per month"
       >
         {ticks.map((tick) => {
           const y = axis - (tick / max) * plotHeight;
@@ -74,7 +74,7 @@ export default function TrendChart({ months }: { months: MonthPoint[] }) {
                 fill={CHART_BAR}
                 opacity={isMax ? 1 : 0.45}
               >
-                <title>{`${point.label}: ${point.count} requests (${total > 0 ? Math.round((point.count / total) * 100) : 0}% of total)`}</title>
+                <title>{`${point.label}: ${point.count} outputs (${total > 0 ? Math.round((point.count / total) * 100) : 0}% of total)`}</title>
               </rect>
               <text
                 x={x + barWidth / 2}

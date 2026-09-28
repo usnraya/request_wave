@@ -27,9 +27,9 @@ const selectClass =
 const inputClass =
   "h-10 w-full rounded-xl border border-input bg-background px-3 text-[13px] outline-none transition-colors focus:border-ring focus:ring-2 focus:ring-ring/20";
 
-type Row = { title: string; notionId: string };
+type Row = { title: string; notionId: string; outputCount: string };
 
-const emptyRow: Row = { title: "", notionId: "" };
+const emptyRow: Row = { title: "", notionId: "", outputCount: "1" };
 
 export default function BulkRequestForm({
   teams,
@@ -104,16 +104,17 @@ export default function BulkRequestForm({
       </div>
 
       <div className="space-y-2 border-t border-border/80 pt-5">
-        <div className="hidden gap-2 px-1 text-xs font-medium text-muted-foreground sm:grid sm:grid-cols-[2rem_1fr_14rem_5rem]">
+        <div className="hidden gap-2 px-1 text-xs font-medium text-muted-foreground sm:grid sm:grid-cols-[2rem_minmax(0,1fr)_14rem_7rem_5rem]">
           <span>#</span>
           <span>Title</span>
           <span>Notion ID</span>
+          <span>Outputs</span>
           <span className="sr-only">Actions</span>
         </div>
         {rows.map((row, index) => (
           <div
             key={index}
-            className="grid gap-2 sm:grid-cols-[2rem_1fr_14rem_5rem] sm:items-center"
+            className="grid gap-2 sm:grid-cols-[2rem_minmax(0,1fr)_14rem_7rem_5rem] sm:items-center"
           >
             <span className="text-sm text-muted-foreground">{index + 1}</span>
             <input
@@ -132,6 +133,19 @@ export default function BulkRequestForm({
               }
               aria-label={`Notion ID for row ${index + 1}`}
               placeholder="Notion ID"
+              className={inputClass}
+            />
+            <input
+              name="outputCount"
+              type="number"
+              min={1}
+              step={1}
+              required={Boolean(row.title || row.notionId)}
+              value={row.outputCount}
+              onChange={(event) =>
+                updateRow(index, "outputCount", event.target.value)
+              }
+              aria-label={`Outputs for row ${index + 1}`}
               className={inputClass}
             />
             <button

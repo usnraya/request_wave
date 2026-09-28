@@ -43,6 +43,12 @@ function numberValue(formData: FormData, name: string, optionalValue = false): n
   return value;
 }
 
+function positiveInteger(formData: FormData, name: string): number {
+  const value = Number(String(formData.get(name) ?? "").trim());
+  if (!Number.isInteger(value) || value < 1) throw new Error(`Invalid ${name}`);
+  return value;
+}
+
 type ReferencePayload = {
   team_id: string;
   category_id: string;
@@ -66,6 +72,7 @@ function requestPayload(formData: FormData) {
     status: choice(text(formData, "status"), requestStatuses, "status") as RequestStatus,
     estimated_hours: numberValue(formData, "estimatedHours"),
     actual_hours: numberValue(formData, "actualHours", true),
+    output_count: positiveInteger(formData, "outputCount"),
     description: optional(formData, "description"),
     figma_url: optionalUrl(formData, "figmaUrl"),
     drive_url: optionalUrl(formData, "driveUrl"),
@@ -76,6 +83,7 @@ function bulkRows(formData: FormData): BulkRow[] {
   return parseBulkRows(
     formData.getAll("title").map(String),
     formData.getAll("notionId").map(String),
+    formData.getAll("outputCount").map(String),
   );
 }
 
@@ -130,6 +138,7 @@ export async function createRequests(
       status: "done" as const,
       estimated_hours: 0,
       actual_hours: null,
+      output_count: row.outputCount,
       description: null,
       figma_url: null,
       drive_url: null,

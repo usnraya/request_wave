@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { getRequestCountByCategory } from "@/lib/dashboard-utils";
+import { getRequestCountByCategory, getTotalOutputs } from "@/lib/dashboard-utils";
 import type { Category } from "@/types/category";
 import type { Request } from "@/types/request";
 
@@ -26,7 +26,7 @@ export default function CategorySidebar({
         {all.map((category) => {
           const count = category.id
             ? getRequestCountByCategory(requests, category.id)
-            : requests.length;
+            : getTotalOutputs(requests);
           return (
             <button
               key={category.id || "all"}

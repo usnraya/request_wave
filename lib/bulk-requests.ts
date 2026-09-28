@@ -2,7 +2,15 @@ import { isFutureMonth, parseISODate, today } from "@/lib/date-utils";
 
 export const maxBulkRows = 50;
 
-export type BulkRow = { title: string; notionId: string };
+export type BulkRow = { title: string; notionId: string; outputCount: number };
+
+function parseOutputCount(value: string, rowNumber: number): number {
+  const outputCount = Number(value.trim());
+  if (!Number.isInteger(outputCount) || outputCount < 1) {
+    throw new Error(`Outputs must be a positive whole number on row ${rowNumber}`);
+  }
+  return outputCount;
+}
 
 function isoDate(date: Date): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
@@ -29,11 +37,16 @@ export function dateForMonth(month: string, now = today()): string {
  * Pairs the repeated title/notionId inputs into rows, dropping rows the user left
  * entirely blank. Row numbers in errors match the numbers shown in the form.
  */
-export function parseBulkRows(titles: string[], notionIds: string[]): BulkRow[] {
+export function parseBulkRows(
+  titles: string[],
+  notionIds: string[],
+  outputCounts: string[],
+): BulkRow[] {
   const rows = titles
     .map((title, index) => ({
       title: title.trim(),
       notionId: (notionIds[index] ?? "").trim(),
+      outputCount: (outputCounts[index] ?? "").trim(),
       number: index + 1,
     }))
     .filter((row) => row.title || row.notionId);
@@ -48,5 +61,9 @@ export function parseBulkRows(titles: string[], notionIds: string[]): BulkRow[] 
       throw new Error(`Notion ID is required on row ${row.number}`);
     }
   }
-  return rows.map(({ title, notionId }) => ({ title, notionId }));
+  return rows.map(({ title, notionId, outputCount, number }) => ({
+    title,
+    notionId,
+    outputCount: parseOutputCount(outputCount, number),
+  }));
 }

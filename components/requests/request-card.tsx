@@ -25,6 +25,7 @@ export default function RequestCard({
         </div>
         <div className="flex items-center gap-2">
           <span className="shrink-0 rounded-full bg-[#16B1FF]/15 px-2.5 py-1 text-xs font-medium text-[#0a6ea3] dark:text-[#7fd4ff]">{category?.name ?? "Uncategorized"}</span>
+          <span className="shrink-0 rounded-full bg-primary/15 px-2.5 py-1 text-xs font-medium text-primary">{request.outputCount} output{request.outputCount === 1 ? "" : "s"}</span>
           {canManage && <RequestActions requestId={request.id} title={request.title} />}
         </div>
       </div>

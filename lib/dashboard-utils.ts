@@ -25,15 +25,21 @@ export function filterRequests(
   });
 }
 
+export function getTotalOutputs(requests: Request[]): number {
+  return requests.reduce((total, request) => total + request.outputCount, 0);
+}
+
 export function getRequestsThisMonth(requests: Request[]): number {
   const reference = today();
-  return requests.filter((request) =>
-    isSameMonth(parseISODate(request.requestDate), reference),
-  ).length;
+  return getTotalOutputs(
+    requests.filter((request) =>
+      isSameMonth(parseISODate(request.requestDate), reference),
+    ),
+  );
 }
 
 export function getTotalRequests(requests: Request[]): number {
-  return requests.length;
+  return getTotalOutputs(requests);
 }
 
 export function getRecentRequests(requests: Request[], count = 8): Request[] {
@@ -73,11 +79,13 @@ function countForMonth(
   month: MonthPoint,
   teamId?: string,
 ): number {
-  return requests.filter(
-    (request) =>
-      (!teamId || request.teamId === teamId) &&
-      monthKey(parseISODate(request.requestDate)) === month.key,
-  ).length;
+  return getTotalOutputs(
+    requests.filter(
+      (request) =>
+        (!teamId || request.teamId === teamId) &&
+        monthKey(parseISODate(request.requestDate)) === month.key,
+    ),
+  );
 }
 
 export function getMonthlyTeamRequests(
@@ -98,11 +106,13 @@ function countForCategoryMonth(
   month: MonthPoint,
   categoryId: string,
 ): number {
-  return requests.filter(
-    (request) =>
-      request.categoryId === categoryId &&
-      monthKey(parseISODate(request.requestDate)) === month.key,
-  ).length;
+  return getTotalOutputs(
+    requests.filter(
+      (request) =>
+        request.categoryId === categoryId &&
+        monthKey(parseISODate(request.requestDate)) === month.key,
+    ),
+  );
 }
 
 export function getMonthlyCategoryRequests(
@@ -140,5 +150,5 @@ export function getRequestCountByCategory(
   requests: Request[],
   categoryId: string,
 ): number {
-  return requests.filter((request) => request.categoryId === categoryId).length;
+  return getTotalOutputs(requests.filter((request) => request.categoryId === categoryId));
 }

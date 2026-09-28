@@ -28,6 +28,7 @@ export type Request = {
   status: RequestStatus;
   estimatedHours: number;
   actualHours?: number;
+  outputCount: number;
   description?: string;
   figmaUrl?: string;
   driveUrl?: string;

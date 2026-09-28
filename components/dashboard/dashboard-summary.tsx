@@ -5,7 +5,7 @@ import type { Request } from "@/types/request";
 
 export default function DashboardSummary({ requests, teamCount, categoryCount }: { requests: Request[]; teamCount: number; categoryCount: number }) {
   const values = [
-    ["Total requests", getTotalRequests(requests), CheckCircle2, "border-t-primary", "text-primary"],
+    ["Total outputs", getTotalRequests(requests), CheckCircle2, "border-t-primary", "text-primary"],
     ["This month", getRequestsThisMonth(requests), Layers3, "border-t-[#16B1FF]", "text-[#0b8ccc]"],
     ["Teams", teamCount, UsersRound, "border-t-[#FFB400]", "text-[#b47d00]"],
     ["Work Areas", categoryCount, Tags, "border-t-[#8A8D93]", "text-secondary"],

@@ -2,7 +2,7 @@ import DashboardCard from "@/components/dashboard/dashboard-card";
 import { getHeatLevel, type MonthPoint } from "@/lib/dashboard-utils";
 import type { Category } from "@/types/category";
 
-/** Green intensity scale. Index 0 is "no requests" and stays transparent. */
+/** Green intensity scale. Index 0 is "no outputs" and stays transparent. */
 const heat = (level: number) => `rgb(16 175 19 / ${[0, 0.16, 0.3, 0.55, 0.88][level]})`;
 
 function Legend() {
@@ -41,15 +41,15 @@ export default function CategoryHeatmap({
 
   return (
     <DashboardCard
-      title="Monthly Requests Heatmap"
+      title="Monthly Outputs Heatmap"
       subtitle={`${categories.length} work areas across 12 months`}
       action={<Legend />}
     >
       <div className="overflow-x-auto rounded-lg border border-border/80">
         <table className="w-full min-w-[900px] border-collapse text-sm">
           <caption className="sr-only">
-            Completed requests by work area and month. Darker green means more
-            requests.
+            Completed outputs by work area and month. Darker green means more
+            outputs.
           </caption>
           <thead>
             <tr className="border-b border-border/80 bg-muted text-left text-xs text-muted-foreground">

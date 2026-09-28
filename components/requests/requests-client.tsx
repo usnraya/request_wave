@@ -9,7 +9,7 @@ import type { Category } from "@/types/category";
 import type { DashboardFilters } from "@/types/dashboard";
 import type { Request } from "@/types/request";
 import type { Team } from "@/types/team";
-import { filterRequests } from "@/lib/dashboard-utils";
+import { filterRequests, getTotalOutputs } from "@/lib/dashboard-utils";
 
 export default function RequestsClient({
   initialFilters,
@@ -112,7 +112,7 @@ export default function RequestsClient({
         <section aria-live="polite" className="space-y-3">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold">
-              {filtered.length} requests
+              {getTotalOutputs(filtered)} outputs
             </h2>
           </div>
           {filtered.length ? (

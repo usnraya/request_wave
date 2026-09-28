@@ -16,7 +16,7 @@ export default function CategoryRequestsTable({
   return (
     <div className="overflow-x-auto rounded-xl border border-border bg-card">
       <table className="w-full min-w-[900px] border-collapse text-[13px]">
-        <caption className="sr-only">Requests by work area and period</caption>
+        <caption className="sr-only">Outputs by work area and period</caption>
         <thead>
           <tr className="border-b border-border bg-muted/60 text-left text-xs text-muted-foreground">
             <th

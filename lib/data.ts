@@ -25,6 +25,7 @@ function mapRequest(row: Record<string, unknown>): Request {
     status: row.status as Request["status"],
     estimatedHours: Number(row.estimated_hours),
     actualHours: row.actual_hours == null ? undefined : Number(row.actual_hours),
+    outputCount: Number.isInteger(Number(row.output_count)) && Number(row.output_count) > 0 ? Number(row.output_count) : 1,
     description: row.description ? String(row.description) : undefined,
     figmaUrl: row.figma_url ? String(row.figma_url) : undefined,
     driveUrl: row.drive_url ? String(row.drive_url) : undefined,
