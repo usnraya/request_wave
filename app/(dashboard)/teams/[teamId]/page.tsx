@@ -1,16 +1,15 @@
 import { notFound } from "next/navigation";
 import TeamDetailView from "@/components/teams/team-detail-view";
-import { getCategories, getRequests, getTeams, getUsers } from "@/lib/data";
+import { getCategories, getRequests, getTeams } from "@/lib/data";
 
 export default async function TeamDetailPage({
   params,
 }: PageProps<"/teams/[teamId]">) {
   const { teamId } = await params;
-  const [teams, requests, categories, users] = await Promise.all([
+  const [teams, requests, categories] = await Promise.all([
     getTeams(),
     getRequests(),
     getCategories(),
-    getUsers(),
   ]);
   const team = teams.find((item) => item.id === teamId);
   if (!team) notFound();
@@ -19,7 +18,6 @@ export default async function TeamDetailPage({
       team={team}
       requests={requests.filter((request) => request.status === "done" && request.teamId === teamId)}
       categories={categories}
-      users={users}
     />
   );
 }

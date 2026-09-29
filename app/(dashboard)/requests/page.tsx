@@ -19,7 +19,6 @@ export default async function RequestsPage({
   ]);
   const filters: DashboardFilters = {
     year: first(params.year),
-    month: first(params.month),
     team: first(params.team),
     category: first(params.category),
     status: "",

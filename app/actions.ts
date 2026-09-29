@@ -30,6 +30,12 @@ function optionalUrl(formData: FormData, name: string): string | null {
   return value;
 }
 
+function safeReturnPath(formData: FormData, fallback: string): string {
+  const value = optional(formData, "returnTo");
+  if (!value || (value !== fallback && !value.startsWith(`${fallback}?`))) return fallback;
+  return value;
+}
+
 function choice<T extends readonly string[]>(value: string, values: T, name: string): T[number] {
   if (!values.includes(value)) throw new Error(`Invalid ${name}`);
   return value as T[number];
@@ -168,11 +174,12 @@ export async function updateRequest(formData: FormData) {
 export async function deleteRequest(formData: FormData) {
   await requireRole("PM");
   const id = text(formData, "id");
+  const returnTo = safeReturnPath(formData, "/requests");
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.from("requests").delete().eq("id", id);
   if (error) throw new Error(error.message);
   revalidatePath("/dashboard");
   revalidatePath("/requests");
   revalidatePath("/teams");
-  redirect("/requests");
+  redirect(returnTo);
 }

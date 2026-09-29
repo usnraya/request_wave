@@ -3,27 +3,24 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import DashboardCard from "./dashboard-card";
+import { getPageItems } from "@/lib/pagination";
 import type { Category } from "@/types/category";
 import type { Request } from "@/types/request";
 import type { Team } from "@/types/team";
-import type { User } from "@/types/user";
 
 export default function RecentRequests({
   requests,
   categories,
   teams,
-  users,
 }: {
   requests: Request[];
   categories: Category[];
   teams: Team[];
-  users: User[];
 }) {
   const categoryById = new Map(
     categories.map((category) => [category.id, category.name]),
   );
   const teamById = new Map(teams.map((team) => [team.id, team.name]));
-  const userById = new Map(users.map((user) => [user.id, user.name]));
   const pageSize = 5;
   const totalPages = Math.max(1, Math.ceil(requests.length / pageSize));
   const [currentPage, setCurrentPage] = useState(1);
@@ -55,9 +52,6 @@ export default function RecentRequests({
                 <th scope="col" className="px-3 py-2.5 font-medium">
                   Work Area
                 </th>
-                <th scope="col" className="px-4 py-2.5 font-medium">
-                  Requester
-                </th>
               </tr>
             </thead>
             <tbody>
@@ -77,9 +71,6 @@ export default function RecentRequests({
                   </td>
                   <td className="max-w-40 truncate px-3 py-2.5 text-muted-foreground">
                     {categoryById.get(request.categoryId) ?? "—"}
-                  </td>
-                  <td className="max-w-24 truncate px-4 py-2.5 text-muted-foreground">
-                    {userById.get(request.requesterId) ?? "—"}
                   </td>
                 </tr>
               ))}
@@ -108,31 +99,27 @@ export default function RecentRequests({
           >
             <ChevronLeft className="size-4" />
           </button>
-          {(() => {
-            const count = Math.min(3, totalPages);
-            const start = Math.max(
-              1,
-              Math.min(currentPage - 1, totalPages - count + 1),
-            );
-            return Array.from({ length: count }, (_, index) => {
-              const number = start + index;
-              return (
-                <button
-                  key={number}
-                  type="button"
-                  aria-current={number === currentPage ? "page" : undefined}
-                  onClick={() => setCurrentPage(number)}
-                  className={
-                    number === currentPage
-                      ? "flex size-8 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground"
-                      : "flex size-8 items-center justify-center rounded-full text-xs text-muted-foreground hover:bg-muted"
-                  }
-                >
-                  {number}
-                </button>
-              );
-            });
-          })()}
+          {getPageItems(totalPages, currentPage).map((item, index) =>
+            item === "ellipsis" ? (
+              <span key={`ellipsis-${index}`} aria-label="More pages" className="flex size-8 items-center justify-center text-xs text-muted-foreground">
+                …
+              </span>
+            ) : (
+              <button
+                key={item}
+                type="button"
+                aria-current={item === currentPage ? "page" : undefined}
+                onClick={() => setCurrentPage(item)}
+                className={
+                  item === currentPage
+                    ? "flex size-8 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground"
+                    : "flex size-8 items-center justify-center rounded-full text-xs text-muted-foreground hover:bg-muted"
+                }
+              >
+                {item}
+              </button>
+            ),
+          )}
           <button
             type="button"
             aria-label="Next page"

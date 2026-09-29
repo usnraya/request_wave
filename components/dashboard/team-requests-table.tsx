@@ -1,14 +1,22 @@
 import Link from "next/link";
-import type { MonthPoint } from "@/lib/dashboard-utils";
+import OutputBreakdownPopover from "./output-breakdown-popover";
+import { getOutputBreakdown, type MonthPoint } from "@/lib/dashboard-utils";
+import type { Category } from "@/types/category";
+import type { Request } from "@/types/request";
 import type { Team } from "@/types/team";
 
 export default function TeamRequestsTable({
   teams,
+  categories,
+  requests,
   getSeries,
 }: {
   teams: Team[];
+  categories: Category[];
+  requests: Request[];
   getSeries: (id: string) => MonthPoint[];
 }) {
+  const categoryNameById = new Map(categories.map((category) => [category.id, category.name]));
   const rows = teams.map((team) => ({ team, series: getSeries(team.id) }));
   const columns = rows[0]?.series ?? [];
   return (
@@ -60,14 +68,28 @@ export default function TeamRequestsTable({
                     {team.name}
                   </Link>
                 </th>
-                {series.map((point) => (
-                  <td
-                    key={point.key}
-                    className="px-3 py-3 text-center tabular-nums"
-                  >
-                    {point.count ?? "—"}
-                  </td>
-                ))}
+                {series.map((point) => {
+                  const breakdown = point.count === null
+                    ? []
+                    : getOutputBreakdown(requests.filter((request) => request.teamId === team.id), point.key, "categoryId")
+                        .map(({ id, outputCount }) => ({
+                          label: categoryNameById.get(id) ?? "Unknown work area",
+                          outputCount,
+                        }));
+                  return (
+                    <td key={point.key} className="px-3 py-3 text-center tabular-nums">
+                      {point.count === null ? "—" : (
+                        <OutputBreakdownPopover
+                          value={point.count}
+                          monthLabel={point.label}
+                          rowLabel={team.name}
+                          sourceLabel="Work areas"
+                          items={breakdown}
+                        />
+                      )}
+                    </td>
+                  );
+                })}
                 <td className="sticky right-0 z-10 border-l border-border bg-card px-4 py-3 text-right font-semibold tabular-nums shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.08)]">
                   {total}
                 </td>

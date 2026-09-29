@@ -17,7 +17,6 @@ export function filterRequests(
     const requestMonth = monthKey(parseISODate(request.requestDate));
     return (
       (!filters.year || requestMonth.startsWith(`${filters.year}-`)) &&
-      (!filters.month || requestMonth === filters.month) &&
       (!filters.team || request.teamId === filters.team) &&
       (!filters.category || request.categoryId === filters.category) &&
       (!filters.status || request.status === filters.status)
@@ -61,8 +60,11 @@ export type MonthPoint = {
 export function getMonthRange(
   year: number = today().getFullYear(),
 ): MonthPoint[] {
-  return Array.from({ length: 12 }, (_, index) => {
-    const date = new Date(year, index, 1);
+  // 2025 data only starts in June; every other year still runs Jan-Dec.
+  const startMonth = year === 2025 ? 5 : 0;
+  const length = 12 - startMonth;
+  return Array.from({ length }, (_, index) => {
+    const date = new Date(year, startMonth + index, 1);
     return {
       key: monthKey(date),
       label: monthLabel(date),
@@ -151,4 +153,27 @@ export function getRequestCountByCategory(
   categoryId: string,
 ): number {
   return getTotalOutputs(requests.filter((request) => request.categoryId === categoryId));
+}
+
+export type OutputBreakdown = {
+  id: string;
+  outputCount: number;
+};
+
+export function getOutputBreakdown(
+  requests: Request[],
+  month: string,
+  groupBy: "categoryId" | "teamId",
+): OutputBreakdown[] {
+  const totals = new Map<string, number>();
+
+  for (const request of requests) {
+    if (monthKey(parseISODate(request.requestDate)) !== month) continue;
+    const id = request[groupBy];
+    totals.set(id, (totals.get(id) ?? 0) + request.outputCount);
+  }
+
+  return [...totals.entries()]
+    .map(([id, outputCount]) => ({ id, outputCount }))
+    .sort((a, b) => b.outputCount - a.outputCount || a.id.localeCompare(b.id));
 }

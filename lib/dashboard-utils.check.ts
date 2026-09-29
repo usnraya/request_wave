@@ -4,6 +4,7 @@ import {
   getHeatLevel,
   getMonthlyCategoryRequests,
   getMonthlyTeamRequests,
+  getOutputBreakdown,
   getRequestCountByCategory,
   getRequestsThisMonth,
   getTotalMonthlyRequests,
@@ -51,5 +52,27 @@ assert.equal(getRequestCountByCategory(requests, "category-1"), 5, "category cou
 assert.equal(currentPoint(getTotalMonthlyRequests(requests, months))?.count, 5, "monthly total sums quantities");
 assert.equal(currentPoint(getMonthlyTeamRequests(requests, "team-1", months))?.count, 5, "team month sums quantities");
 assert.equal(currentPoint(getMonthlyCategoryRequests(requests, "category-1", months))?.count, 5, "category month sums quantities");
+
+const historicalRequest = { ...request, requestDate: "2025-07-10", deadline: "2025-07-20" };
+assert.equal(getTotalRequests([historicalRequest]), 5, "selected month sums historical output quantities");
+
+const breakdownRequests = [
+  historicalRequest,
+  { ...historicalRequest, id: "request-2", categoryId: "category-2", outputCount: 2 },
+  { ...historicalRequest, id: "request-3", categoryId: "category-1", outputCount: 3 },
+];
+assert.deepEqual(
+  getOutputBreakdown(breakdownRequests, "2025-07", "categoryId"),
+  [
+    { id: "category-1", outputCount: 8 },
+    { id: "category-2", outputCount: 2 },
+  ],
+  "breakdown groups and sums output quantities",
+);
+
+assert.equal(getMonthRange(2025).length, 7, "2025 range covers June-December only");
+assert.equal(getMonthRange(2025)[0]?.key, "2025-06", "2025 range starts in June");
+assert.equal(getMonthRange(2026).length, 12, "2026 range covers the full year");
+assert.equal(getMonthRange(2026)[0]?.key, "2026-01", "future years start in January");
 
 console.log("dashboard-utils: OK");

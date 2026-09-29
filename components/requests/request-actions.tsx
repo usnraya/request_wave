@@ -4,7 +4,15 @@ import Link from "next/link";
 import { Pencil, Trash2 } from "lucide-react";
 import { deleteRequest } from "@/app/actions";
 
-export default function RequestActions({ requestId, title }: { requestId: string; title: string }) {
+export default function RequestActions({
+  requestId,
+  title,
+  returnTo,
+}: {
+  requestId: string;
+  title: string;
+  returnTo: string;
+}) {
   function confirmDelete(event: React.FormEvent<HTMLFormElement>) {
     if (!window.confirm(`Delete “${title}”? This cannot be undone.`)) event.preventDefault();
   }
@@ -20,6 +28,7 @@ export default function RequestActions({ requestId, title }: { requestId: string
       </Link>
       <form action={deleteRequest} onSubmit={confirmDelete}>
         <input type="hidden" name="id" value={requestId} />
+        <input type="hidden" name="returnTo" value={returnTo} />
         <button
           type="submit"
           aria-label={`Delete ${title}`}

@@ -10,6 +10,7 @@ import type { DashboardFilters } from "@/types/dashboard";
 import type { Request } from "@/types/request";
 import type { Team } from "@/types/team";
 import { filterRequests, getTotalOutputs } from "@/lib/dashboard-utils";
+import { getPageItems } from "@/lib/pagination";
 
 export default function RequestsClient({
   initialFilters,
@@ -56,15 +57,20 @@ export default function RequestsClient({
     (currentPage - 1) * pageSize,
     currentPage * pageSize,
   );
-  function update(params: Record<string, string>) {
+  function buildPath(params: Record<string, string>) {
     const next = new URLSearchParams();
     Object.entries({ ...initialFilters, q: initialQuery, page: "", ...params }).forEach(
       ([key, value]) => {
         if (value) next.set(key, value);
       },
     );
-    router.replace(`/requests${next.toString() ? `?${next}` : ""}`);
+    return `/requests${next.toString() ? `?${next}` : ""}`;
   }
+  function update(params: Record<string, string>) {
+    router.replace(buildPath(params));
+  }
+  // Preserves the current filters/search/page so deleting a request returns here instead of resetting to page 1.
+  const returnTo = buildPath({ page: currentPage > 1 ? String(currentPage) : "" });
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-10">
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-border pb-6">
@@ -114,6 +120,11 @@ export default function RequestsClient({
             <h2 className="text-sm font-semibold">
               {getTotalOutputs(filtered)} outputs
             </h2>
+            {totalPages > 1 && (
+              <p className="text-xs text-muted-foreground">
+                Page {currentPage} of {totalPages}
+              </p>
+            )}
           </div>
           {filtered.length ? (
             paged.map((request) => (
@@ -123,6 +134,7 @@ export default function RequestsClient({
                 categories={categories}
                 teams={teams}
                 canManage={canCreate}
+                returnTo={returnTo}
               />
             ))
           ) : (
@@ -141,31 +153,27 @@ export default function RequestsClient({
               >
                 <ChevronLeft className="size-4" />
               </button>
-              {(() => {
-                const count = Math.min(3, totalPages);
-                const start = Math.max(
-                  1,
-                  Math.min(currentPage - 1, totalPages - count + 1),
-                );
-                return Array.from({ length: count }, (_, index) => {
-                  const number = start + index;
-                  return (
-                    <button
-                      key={number}
-                      type="button"
-                      aria-current={number === currentPage ? "page" : undefined}
-                      onClick={() => update({ page: String(number) })}
-                      className={
-                        number === currentPage
-                          ? "flex size-8 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground"
-                          : "flex size-8 items-center justify-center rounded-full text-xs text-muted-foreground hover:bg-muted"
-                      }
-                    >
-                      {number}
-                    </button>
-                  );
-                });
-              })()}
+              {getPageItems(totalPages, currentPage).map((item, index) =>
+                item === "ellipsis" ? (
+                  <span key={`ellipsis-${index}`} aria-label="More pages" className="flex size-8 items-center justify-center text-xs text-muted-foreground">
+                    …
+                  </span>
+                ) : (
+                  <button
+                    key={item}
+                    type="button"
+                    aria-current={item === currentPage ? "page" : undefined}
+                    onClick={() => update({ page: String(item) })}
+                    className={
+                      item === currentPage
+                        ? "flex size-8 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground"
+                        : "flex size-8 items-center justify-center rounded-full text-xs text-muted-foreground hover:bg-muted"
+                    }
+                  >
+                    {item}
+                  </button>
+                ),
+              )}
               <button
                 type="button"
                 aria-label="Next page"

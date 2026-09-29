@@ -1,13 +1,21 @@
-import type { MonthPoint } from "@/lib/dashboard-utils";
+import OutputBreakdownPopover from "./output-breakdown-popover";
+import { getOutputBreakdown, type MonthPoint } from "@/lib/dashboard-utils";
 import type { Category } from "@/types/category";
+import type { Request } from "@/types/request";
+import type { Team } from "@/types/team";
 
 export default function CategoryRequestsTable({
   categories,
+  teams,
+  requests,
   getSeries,
 }: {
   categories: Category[];
+  teams: Team[];
+  requests: Request[];
   getSeries: (id: string) => MonthPoint[];
 }) {
+  const teamNameById = new Map(teams.map((team) => [team.id, team.name]));
   const rows = categories.map((category) => ({
     category,
     series: getSeries(category.id),
@@ -60,14 +68,28 @@ export default function CategoryRequestsTable({
                 >
                   {category.name}
                 </th>
-                {series.map((point) => (
-                  <td
-                    key={point.key}
-                    className="px-3 py-3 text-center tabular-nums"
-                  >
-                    {point.count ?? "—"}
-                  </td>
-                ))}
+                {series.map((point) => {
+                  const breakdown = point.count === null
+                    ? []
+                    : getOutputBreakdown(requests.filter((request) => request.categoryId === category.id), point.key, "teamId")
+                        .map(({ id, outputCount }) => ({
+                          label: teamNameById.get(id) ?? "Unknown team",
+                          outputCount,
+                        }));
+                  return (
+                    <td key={point.key} className="px-3 py-3 text-center tabular-nums">
+                      {point.count === null ? "—" : (
+                        <OutputBreakdownPopover
+                          value={point.count}
+                          monthLabel={point.label}
+                          rowLabel={category.name}
+                          sourceLabel="Teams"
+                          items={breakdown}
+                        />
+                      )}
+                    </td>
+                  );
+                })}
                 <td className="sticky right-0 z-10 border-l border-border bg-card px-4 py-3 text-right font-semibold tabular-nums shadow-[-2px_0_4px_-2px_rgba(0,0,0,0.08)]">
                   {total}
                 </td>

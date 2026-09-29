@@ -8,11 +8,13 @@ export default function RequestCard({
   categories,
   teams,
   canManage,
+  returnTo,
 }: {
   request: Request;
   categories: Category[];
   teams: Team[];
   canManage: boolean;
+  returnTo: string;
 }) {
   const category = categories.find((item) => item.id === request.categoryId);
   const team = teams.find((item) => item.id === request.teamId);
@@ -26,7 +28,9 @@ export default function RequestCard({
         <div className="flex items-center gap-2">
           <span className="shrink-0 rounded-full bg-[#16B1FF]/15 px-2.5 py-1 text-xs font-medium text-[#0a6ea3] dark:text-[#7fd4ff]">{category?.name ?? "Uncategorized"}</span>
           <span className="shrink-0 rounded-full bg-primary/15 px-2.5 py-1 text-xs font-medium text-primary">{request.outputCount} output{request.outputCount === 1 ? "" : "s"}</span>
-          {canManage && <RequestActions requestId={request.id} title={request.title} />}
+          {canManage && (
+            <RequestActions requestId={request.id} title={request.title} returnTo={returnTo} />
+          )}
         </div>
       </div>
       <dl className="mt-4 border-t border-border pt-4 text-[13px]">

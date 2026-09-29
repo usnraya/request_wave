@@ -15,7 +15,6 @@ import type { Category } from "@/types/category";
 import type { DashboardFilters as FilterState } from "@/types/dashboard";
 import type { Request } from "@/types/request";
 import type { Team } from "@/types/team";
-import type { User } from "@/types/user";
 import {
   filterRequests,
   getMonthRange,
@@ -25,20 +24,18 @@ import {
   getTotalMonthlyRequests,
   getTotalOutputs,
 } from "@/lib/dashboard-utils";
-import { monthKey, today } from "@/lib/date-utils";
+import { today } from "@/lib/date-utils";
 
 export default function DashboardClient({
   initialFilters,
   requests,
   categories,
   teams,
-  users,
 }: {
   initialFilters: FilterState;
   requests: Request[];
   categories: Category[];
   teams: Team[];
-  users: User[];
 }) {
   const router = useRouter();
   const completedRequests = requests.filter((request) => request.status === "done");
@@ -52,7 +49,6 @@ export default function DashboardClient({
 
   function updateFilter(key: keyof FilterState, value: string) {
     const next = { ...initialFilters, [key]: value };
-    if (key === "year" && next.month && !next.month.startsWith(`${value}-`)) next.month = "";
     const params = new URLSearchParams();
     Object.entries(next).forEach(([name, entry]) => { if (entry) params.set(name, entry); });
     router.replace(`/dashboard${params.toString() ? `?${params.toString()}` : ""}`);
@@ -64,10 +60,6 @@ export default function DashboardClient({
         <DashboardFilters
           filters={initialFilters}
           onChange={updateFilter}
-          onThisMonth={() => {
-            const currentMonth = monthKey(today());
-            router.replace(`/dashboard?year=${currentMonth.slice(0, 4)}&month=${currentMonth}`);
-          }}
           onReset={() => router.replace("/dashboard")}
           teams={teams}
         />
@@ -109,14 +101,24 @@ export default function DashboardClient({
       >
         <div className="pt-3">
           {groupBy === "team" ? (
-            <TeamRequestsTable teams={visibleTeams} getSeries={(teamId) => getMonthlyTeamRequests(filtered, teamId, months)} />
+            <TeamRequestsTable
+              teams={visibleTeams}
+              categories={categories}
+              requests={filtered}
+              getSeries={(teamId) => getMonthlyTeamRequests(filtered, teamId, months)}
+            />
           ) : (
-            <CategoryRequestsTable categories={categories} getSeries={(categoryId) => getMonthlyCategoryRequests(filtered, categoryId, months)} />
+            <CategoryRequestsTable
+              categories={categories}
+              teams={teams}
+              requests={filtered}
+              getSeries={(categoryId) => getMonthlyCategoryRequests(filtered, categoryId, months)}
+            />
           )}
         </div>
       </DashboardCard>
 
-      <RecentRequests requests={getRecentRequests(filtered, 50)} categories={categories} teams={teams} users={users} />
+      <RecentRequests requests={getRecentRequests(filtered, 50)} categories={categories} teams={teams} />
     </div>
   );
 }

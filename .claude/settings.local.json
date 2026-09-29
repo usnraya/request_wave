@@ -10,7 +10,8 @@
   "permissions": {
     "allow": [
       "Bash(npm run *)",
-      "PowerShell(npm install recharts)"
+      "PowerShell(npm install recharts)",
+      "Bash(node delete-post-prefix.js*)"
     ]
   },
   "hasCompletedOnboarding": true
