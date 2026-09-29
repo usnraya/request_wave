@@ -97,7 +97,7 @@ export default function CategoryHeatmap({
                       <td
                         key={point.key}
                         // The number is always printed, so color only reinforces it.
-                        className={`px-3 py-3 text-center tabular-nums ${level === 4 ? "font-semibold text-white" : "text-foreground"}`}
+                        className={`px-3 py-3 text-center tabular-nums ${point.count === 0 ? "text-muted-foreground/40" : level === 4 ? "font-semibold text-white" : "text-foreground"}`}
                         style={
                           level ? { backgroundColor: heat(level) } : undefined
                         }
