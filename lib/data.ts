@@ -67,10 +67,23 @@ export async function getUsers(): Promise<User[]> {
 }
 
 export async function getRequests(): Promise<Request[]> {
-  const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.from("requests").select("*");
-  if (error) throw new Error(error.message);
-  return (data ?? []).map(mapRequest);
+  const supabase = createSupabaseAdminClient();
+  const rows: Record<string, unknown>[] = [];
+  const pageSize = 1000;
+
+  for (let from = 0; ; from += pageSize) {
+    const { data, error } = await supabase
+      .from("requests")
+      .select("*")
+      .order("request_date", { ascending: true })
+      .order("id", { ascending: true })
+      .range(from, from + pageSize - 1);
+    if (error) throw new Error(error.message);
+    rows.push(...(data ?? []));
+    if (!data || data.length < pageSize) break;
+  }
+
+  return rows.map(mapRequest);
 }
 
 export async function getRequest(id: string): Promise<Request | null> {

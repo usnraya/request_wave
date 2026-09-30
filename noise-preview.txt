@@ -1,0 +1,62 @@
+﻿{
+  "countsByPattern": {
+    "take": 14,
+    "dayOff": 7,
+    "lastDay": 7,
+    "reviewIntern": 3,
+    "discuss": 14,
+    "scripting": 1,
+    "listPortfolio": 3
+  },
+  "totalMatched": 47,
+  "outputTotal": 47
+}
+
+---MATCHED ROWS (would be deleted)---
+DESIGN-1629	[Week] [Month] 2025 - List portfolio	output=1	date=2025-08-31
+DESIGN-1787	🟡 Discuss - Social Media Task	output=1	date=2025-09-30
+DESIGN-1866	🟡 Discuss Dev - Landing Page Event “Business Partnership”	output=1	date=2025-09-30
+DESIGN-1920	🟡 Discuss - Content Hisensei	output=1	date=2025-10-31
+DESIGN-2041	🟡 Discuss - Merchandise	output=1	date=2025-10-31
+DESIGN-2044	🟡 Event - Marketing Discuss	output=1	date=2025-10-31
+DESIGN-2142	Take Content Demo - HQ life	output=1	date=2025-11-30
+DESIGN-2173	Take Content HQ Life	output=1	date=2025-11-30
+DESIGN-2196	Take Content Pas Foto & Wawancara	output=1	date=2025-11-30
+DESIGN-2201	Take Content Demo Creative Story - Squad	output=1	date=2025-11-30
+DESIGN-2216	Take Content Creative Story - Squad	output=1	date=2025-11-30
+DESIGN-2235	Take Content Parenting #7	output=1	date=2025-11-30
+DESIGN-2317	Take Conten Hari Guru	output=1	date=2025-11-30
+DESIGN-2152	🔴 Day Off - Natha	output=1	date=2025-11-30
+DESIGN-2160	🔴 Day Off - Surya	output=1	date=2025-11-30
+DESIGN-2214	🔴 Day Off - Galungan	output=1	date=2025-11-30
+DESIGN-2219	🔴 Day Off - Galungan	output=1	date=2025-11-30
+DESIGN-2221	🔴 Day Off - Galungan	output=1	date=2025-11-30
+DESIGN-2177	🔴 Last Day - Natha, Mao	output=1	date=2025-11-30
+DESIGN-2190	🟡 Event - Celebrate Natha & Mao’s Last Day	output=1	date=2025-11-30
+DESIGN-2331	Create Script Content Last Day & Footage	output=1	date=2025-11-30
+DESIGN-2193	🟡 Event - Marketing discuss	output=1	date=2025-11-30
+DESIGN-2211	🟡 Discuss - New Marketing Materials	output=1	date=2025-11-30
+DESIGN-2234	🟡 Event - Marketing Academy discuss	output=1	date=2025-11-30
+DESIGN-2366	Take - Video Yutaka-san Speak for Bandung Branch	output=1	date=2025-12-31
+DESIGN-2378	Take Content Parenting #8	output=1	date=2025-12-31
+DESIGN-2390	Take Content Academy Squad	output=1	date=2025-12-31
+DESIGN-2388	Take Audio Voice Over Bootcamp	output=1	date=2025-12-31
+DESIGN-2396	Take Video & VO Content Last Day	output=1	date=2025-12-31
+DESIGN-2409	Take Voice Over & Edit – Adjust Footage Custom Ads (Branch GLC)	output=1	date=2025-12-31
+DESIGN-2456	Take Video - ADS Bandung	output=1	date=2025-12-31
+DESIGN-2371	🔴 Day Off - Gede	output=1	date=2025-12-31
+DESIGN-2404	🔴 Day off - Gede	output=1	date=2025-12-31
+DESIGN-2384	Edit Content Last Day Elya [kosong]	output=1	date=2025-12-31
+DESIGN-2394	🔴 Last Day Work	output=1	date=2025-12-31
+DESIGN-2397	🔴 LAST DAY - Elya	output=1	date=2025-12-31
+DESIGN-2393	💾 LAST REVIEW INTERN - Rekap, Delegate & 360 Review	output=1	date=2025-12-31
+DESIGN-2392	Discuss - LAST REVIEW INTERN - Rekap, Delegate & 360 Review	output=1	date=2025-12-31
+DESIGN-2403	LAST REVIEW INTERN - Rekap, Delegate & 360 Review	output=1	date=2025-12-31
+DESIGN-2361	🟡 Discuss - Task Content Creator (Vivi)	output=1	date=2025-12-31
+DESIGN-2400	🟡 Discuss - Management Task Figma	output=1	date=2025-12-31
+DESIGN-2395	🟡 Discuss - Exterior & Interior Design	output=1	date=2025-12-31
+DESIGN-2401	PPT - Discussion Plan 2026	output=1	date=2025-12-31
+DESIGN-2432	🟡 Discuss - Marketing	output=1	date=2025-12-31
+DESIGN-2380	Scripting Content Carousel	output=1	date=2025-12-31
+DESIGN-2358	[Week] [Month] 2025 - List portfolio	output=1	date=2025-12-31
+DESIGN-2427	[Week] [Month] 2025 - List portfolio	output=1	date=2025-12-31

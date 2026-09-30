@@ -3,6 +3,8 @@ import { getCategories, getRequests, getTeams } from "@/lib/data";
 import { getCurrentUser } from "@/lib/permissions";
 import type { DashboardFilters } from "@/types/dashboard";
 
+export const dynamic = "force-dynamic";
+
 type RawSearchParams = Record<string, string | string[] | undefined>;
 const first = (value: string | string[] | undefined) =>
   Array.isArray(value) ? (value[0] ?? "") : (value ?? "");

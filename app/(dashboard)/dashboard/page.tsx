@@ -2,6 +2,8 @@ import DashboardClient from "@/components/dashboard/dashboard-client";
 import { getCategories, getRequests, getTeams } from "@/lib/data";
 import type { DashboardFilters } from "@/types/dashboard";
 
+export const dynamic = "force-dynamic";
+
 type RawSearchParams = Record<string, string | string[] | undefined>;
 
 function first(value: string | string[] | undefined): string {

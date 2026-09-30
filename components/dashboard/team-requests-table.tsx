@@ -1,6 +1,7 @@
 import Link from "next/link";
 import OutputBreakdownPopover from "./output-breakdown-popover";
-import { getOutputBreakdown, type MonthPoint } from "@/lib/dashboard-utils";
+import { monthKey, parseISODate } from "@/lib/date-utils";
+import type { MonthPoint } from "@/lib/dashboard-utils";
 import type { Category } from "@/types/category";
 import type { Request } from "@/types/request";
 import type { Team } from "@/types/team";
@@ -69,13 +70,23 @@ export default function TeamRequestsTable({
                   </Link>
                 </th>
                 {series.map((point) => {
-                  const breakdown = point.count === null
+                  const monthRequests = point.count === null
                     ? []
-                    : getOutputBreakdown(requests.filter((request) => request.teamId === team.id), point.key, "categoryId")
-                        .map(({ id, outputCount }) => ({
-                          label: categoryNameById.get(id) ?? "Unknown work area",
-                          outputCount,
-                        }));
+                    : requests.filter(
+                        (request) =>
+                          request.teamId === team.id &&
+                          monthKey(parseISODate(request.requestDate)) === point.key,
+                      );
+                  const items = monthRequests
+                    .map((request) => ({
+                      id: request.id,
+                      title: request.title,
+                      team: team.name,
+                      workArea: categoryNameById.get(request.categoryId) ?? "Unknown work area",
+                      outputCount: request.outputCount,
+                    }))
+                    .sort((a, b) => b.outputCount - a.outputCount || a.title.localeCompare(b.title));
+                  const groupCount = new Set(monthRequests.map((request) => request.categoryId)).size;
                   return (
                     <td key={point.key} className="px-3 py-3 text-center tabular-nums">
                       {point.count === null ? "—" : (
@@ -84,7 +95,8 @@ export default function TeamRequestsTable({
                           monthLabel={point.label}
                           rowLabel={team.name}
                           sourceLabel="Work areas"
-                          items={breakdown}
+                          groupCount={groupCount}
+                          items={items}
                         />
                       )}
                     </td>
