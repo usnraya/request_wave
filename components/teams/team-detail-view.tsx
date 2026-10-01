@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { Dialog } from "@base-ui/react/dialog";
+import { ArrowLeft, Trash2, X } from "lucide-react";
 import { deleteRequests } from "@/app/actions";
 import BulkRequestForm from "@/components/requests/bulk-request-form";
 import RequestActions from "@/components/requests/request-actions";
@@ -18,6 +19,12 @@ export default function TeamDetailView({ team, requests, categories, canManage =
   const returnTo = `/teams/${team.id}`;
   const currentYear = today().getFullYear();
   const [year, setYear] = useState(currentYear);
+  // A successful add redirects back here with new data; close the modal when the list changes.
+  const [seenCount, setSeenCount] = useState(requests.length);
+  if (requests.length !== seenCount) {
+    setSeenCount(requests.length);
+    setAdding(false);
+  }
   const teamAll = requests.filter((request) => request.teamId === team.id);
   const years = Array.from(new Set([currentYear, ...teamAll.map((request) => Number(request.requestDate.slice(0, 4)))])).sort((a, b) => b - a);
   const teamRequests = teamAll.filter((request) => request.requestDate.startsWith(`${year}-`)).sort((a, b) => compareNotionId(a.notionId, b.notionId));
@@ -70,7 +77,7 @@ export default function TeamDetailView({ team, requests, categories, canManage =
           <select id="team-year" value={year} onChange={(event) => setYear(Number(event.target.value))} className="h-10 rounded-full border border-input bg-background px-3 text-[13px] outline-none focus:border-ring focus:ring-2 focus:ring-ring/20">
             {years.map((option) => <option key={option} value={option}>{option}</option>)}
           </select>
-          {canManage && <button type="button" onClick={() => setAdding((value) => !value)} aria-expanded={adding} className="h-10 cursor-pointer rounded-full bg-primary px-5 text-[15px] font-medium text-primary-foreground transition-colors hover:bg-[#108513]">{adding ? "Close" : "New request"}</button>}
+          {canManage && <button type="button" onClick={() => setAdding(true)} className="h-10 cursor-pointer rounded-full bg-primary px-5 text-[15px] font-medium text-primary-foreground transition-colors hover:bg-[#108513]">New request</button>}
         </div>
       </header>
       <div className="flex items-center justify-between gap-3 border-b border-border py-3 text-sm text-muted-foreground">
@@ -88,7 +95,20 @@ export default function TeamDetailView({ team, requests, categories, canManage =
         {teamRequests.length > 0 && <label className="inline-flex items-center gap-2 font-medium"><input ref={selectAllRef} type="checkbox" checked={allSelected} onChange={toggleAll} aria-label={allSelected ? "Deselect all requests" : "Select all requests"} className="size-4 accent-primary" />Select all</label>}
       </div>
       </div>
-      {canManage && adding && <div className="mt-6"><BulkRequestForm teams={[team]} categories={categories} fixedTeam={team} returnTo={returnTo} /></div>}
+      {canManage && (
+        <Dialog.Root open={adding} onOpenChange={setAdding}>
+          <Dialog.Portal>
+            <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/40" />
+            <Dialog.Popup className="fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] max-w-5xl -translate-x-1/2 -translate-y-1/2 flex-col overflow-y-auto rounded-2xl border border-border bg-card text-foreground shadow-2xl outline-none">
+              <div className="flex items-center justify-between border-b border-border px-5 py-4 sm:px-6">
+                <Dialog.Title className="text-lg font-semibold">New request</Dialog.Title>
+                <Dialog.Close aria-label="Close" className="rounded-md p-2 text-muted-foreground hover:bg-muted hover:text-foreground"><X className="size-4" /></Dialog.Close>
+              </div>
+              <div className="p-5 sm:p-6"><BulkRequestForm teams={[team]} categories={categories} fixedTeam={team} returnTo={returnTo} /></div>
+            </Dialog.Popup>
+          </Dialog.Portal>
+        </Dialog.Root>
+      )}
       <div className="mt-3 overflow-x-auto rounded-2xl border border-border bg-card">
         <table className="w-full min-w-[860px] text-[13px]">
           <caption className="sr-only">Requests for {team.name}</caption>
