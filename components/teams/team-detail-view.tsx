@@ -59,7 +59,8 @@ export default function TeamDetailView({ team, requests, categories, canManage =
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-10">
       <Link href="/teams" className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-primary"><ArrowLeft className="size-4" />Back to teams</Link>
-      <header className="mt-6 flex flex-wrap items-end justify-between gap-4 border-b border-border pb-6">
+      <div className="sticky top-[68px] z-20 -mx-4 mt-4 bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:-mx-6 sm:px-6 lg:-mx-10 lg:px-10">
+      <header className="flex flex-wrap items-end justify-between gap-4 border-b border-border py-4">
         <div>
           <h1 className="text-3xl font-medium tracking-tight">{team.name}</h1>
           <p className="mt-2 text-[15px] text-muted-foreground">Completed requests assigned to this team.</p>
@@ -72,8 +73,7 @@ export default function TeamDetailView({ team, requests, categories, canManage =
           {canManage && <button type="button" onClick={() => setAdding((value) => !value)} aria-expanded={adding} className="h-10 cursor-pointer rounded-full bg-primary px-5 text-[15px] font-medium text-primary-foreground transition-colors hover:bg-[#108513]">{adding ? "Close" : "New request"}</button>}
         </div>
       </header>
-      {canManage && adding && <div className="mt-6"><BulkRequestForm teams={[team]} categories={categories} fixedTeam={team} returnTo={returnTo} /></div>}
-      <div className="mt-6 flex items-center justify-between gap-3 text-sm text-muted-foreground">
+      <div className="flex items-center justify-between gap-3 border-b border-border py-3 text-sm text-muted-foreground">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <span>{selectedCount} selected{selectedCount > 0 && ` · ${selectedOutputs} outputs`}</span>
           <span className="font-medium text-foreground">Total outputs {year}: <span className="tabular-nums">{totalOutputs}</span></span>
@@ -87,6 +87,8 @@ export default function TeamDetailView({ team, requests, categories, canManage =
         </div>
         {teamRequests.length > 0 && <label className="inline-flex items-center gap-2 font-medium"><input ref={selectAllRef} type="checkbox" checked={allSelected} onChange={toggleAll} aria-label={allSelected ? "Deselect all requests" : "Select all requests"} className="size-4 accent-primary" />Select all</label>}
       </div>
+      </div>
+      {canManage && adding && <div className="mt-6"><BulkRequestForm teams={[team]} categories={categories} fixedTeam={team} returnTo={returnTo} /></div>}
       <div className="mt-3 overflow-x-auto rounded-2xl border border-border bg-card">
         <table className="w-full min-w-[860px] text-[13px]">
           <caption className="sr-only">Requests for {team.name}</caption>
