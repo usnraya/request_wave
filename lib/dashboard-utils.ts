@@ -8,6 +8,7 @@ import {
   parseISODate,
   today,
 } from "@/lib/date-utils";
+import { compareNotionId } from "@/lib/notion-id";
 
 export function filterRequests(
   requests: Request[],
@@ -43,10 +44,7 @@ export function getTotalRequests(requests: Request[]): number {
 
 export function getRecentRequests(requests: Request[], count = 8): Request[] {
   return [...requests]
-    .sort(
-      (a, b) =>
-        b.requestDate.localeCompare(a.requestDate) || b.id.localeCompare(a.id),
-    )
+    .sort((a, b) => compareNotionId(a.notionId, b.notionId) || a.id.localeCompare(b.id))
     .slice(0, count);
 }
 

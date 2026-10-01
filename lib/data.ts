@@ -2,6 +2,7 @@ import "server-only";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { compareNotionId } from "@/lib/notion-id";
 import type { Category } from "@/types/category";
 import type { Request } from "@/types/request";
 import type { Team } from "@/types/team";
@@ -83,7 +84,7 @@ export async function getRequests(): Promise<Request[]> {
     if (!data || data.length < pageSize) break;
   }
 
-  return rows.map(mapRequest);
+  return rows.map(mapRequest).sort((a, b) => compareNotionId(a.notionId, b.notionId) || a.id.localeCompare(b.id));
 }
 
 export async function getRequest(id: string): Promise<Request | null> {

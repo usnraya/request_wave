@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import BulkRequestForm from "@/components/requests/bulk-request-form";
 import RequestActions from "@/components/requests/request-actions";
+import { compareNotionId } from "@/lib/notion-id";
 import type { Category } from "@/types/category";
 import type { Request } from "@/types/request";
 import type { Team } from "@/types/team";
@@ -12,7 +13,7 @@ import type { Team } from "@/types/team";
 export default function TeamDetailView({ team, requests, categories, canManage = false }: { team: Team; requests: Request[]; categories: Category[]; canManage?: boolean }) {
   const [adding, setAdding] = useState(false);
   const returnTo = `/teams/${team.id}`;
-  const teamRequests = requests.filter((request) => request.teamId === team.id).sort((a, b) => b.requestDate.localeCompare(a.requestDate));
+  const teamRequests = requests.filter((request) => request.teamId === team.id).sort((a, b) => compareNotionId(a.notionId, b.notionId));
   const categoryById = new Map(categories.map((category) => [category.id, category.name]));
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const selectAllRef = useRef<HTMLInputElement>(null);

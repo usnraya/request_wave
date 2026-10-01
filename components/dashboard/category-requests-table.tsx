@@ -1,5 +1,6 @@
 import OutputBreakdownPopover from "./output-breakdown-popover";
 import { monthKey, parseISODate } from "@/lib/date-utils";
+import { compareNotionId } from "@/lib/notion-id";
 import type { MonthPoint } from "@/lib/dashboard-utils";
 import type { Category } from "@/types/category";
 import type { Request } from "@/types/request";
@@ -81,15 +82,15 @@ export default function CategoryRequestsTable({
                           request.categoryId === category.id &&
                           monthKey(parseISODate(request.requestDate)) === point.key,
                       );
-                  const items = monthRequests
+                  const items = [...monthRequests]
+                    .sort((a, b) => compareNotionId(a.notionId, b.notionId))
                     .map((request) => ({
                       id: request.id,
                       title: request.title,
                       team: teamNameById.get(request.teamId) ?? "Unknown team",
                       workArea: category.name,
                       outputCount: request.outputCount,
-                    }))
-                    .sort((a, b) => b.outputCount - a.outputCount || a.title.localeCompare(b.title));
+                    }));
                   const groupCount = new Set(monthRequests.map((request) => request.teamId)).size;
                   return (
                     <td key={point.key} className="px-3 py-3 text-center tabular-nums">
