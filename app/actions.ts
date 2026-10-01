@@ -5,7 +5,6 @@ import { redirect } from "next/navigation";
 import { requireRole } from "@/lib/permissions";
 import { dateForMonth, parseBulkRows, type BulkRow } from "@/lib/bulk-requests";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { requestPriorities, requestStatuses, type RequestPriority, type RequestStatus } from "@/types/request";
 
 function text(formData: FormData, name: string, required = true): string {
   const value = String(formData.get(name) ?? "").trim();
@@ -18,35 +17,10 @@ function optional(formData: FormData, name: string): string | null {
   return value || null;
 }
 
-function optionalUrl(formData: FormData, name: string): string | null {
-  const value = optional(formData, name);
-  if (!value) return null;
-  try {
-    const url = new URL(value);
-    if (url.protocol !== "http:" && url.protocol !== "https:") throw new Error();
-  } catch {
-    throw new Error(`Invalid ${name}`);
-  }
-  return value;
-}
-
 function safeReturnPath(formData: FormData, fallback: string): string {
   const value = optional(formData, "returnTo");
   const allowed = ["/requests", "/dashboard"];
   if (!value || !allowed.some((path) => value === path || value.startsWith(`${path}?`))) return fallback;
-  return value;
-}
-
-function choice<T extends readonly string[]>(value: string, values: T, name: string): T[number] {
-  if (!values.includes(value)) throw new Error(`Invalid ${name}`);
-  return value as T[number];
-}
-
-function numberValue(formData: FormData, name: string, optionalValue = false): number | null {
-  const raw = String(formData.get(name) ?? "").trim();
-  if (!raw && optionalValue) return null;
-  const value = Number(raw);
-  if (!Number.isFinite(value) || value < 0) throw new Error(`Invalid ${name}`);
   return value;
 }
 
@@ -63,26 +37,13 @@ type ReferencePayload = {
   designer_id: string | null;
 };
 
-function requestPayload(formData: FormData) {
+function editableRequestPayload(formData: FormData) {
   return {
-    request_code: text(formData, "requestCode"),
-    notion_id: text(formData, "notionId", false),
     title: text(formData, "title"),
+    notion_id: text(formData, "notionId", false),
     team_id: text(formData, "teamId"),
     category_id: text(formData, "categoryId"),
-    requester_id: text(formData, "requesterId"),
-    designer_id: optional(formData, "designerId"),
-    request_date: text(formData, "requestDate"),
-    deadline: text(formData, "deadline"),
-    completed_date: optional(formData, "completedDate"),
-    priority: choice(text(formData, "priority"), requestPriorities, "priority") as RequestPriority,
-    status: choice(text(formData, "status"), requestStatuses, "status") as RequestStatus,
-    estimated_hours: numberValue(formData, "estimatedHours"),
-    actual_hours: numberValue(formData, "actualHours", true),
     output_count: positiveInteger(formData, "outputCount"),
-    description: optional(formData, "description"),
-    figma_url: optionalUrl(formData, "figmaUrl"),
-    drive_url: optionalUrl(formData, "driveUrl"),
   };
 }
 
@@ -103,6 +64,16 @@ async function verifyReferences(payload: ReferencePayload) {
     payload.designer_id ? supabase.from("profiles").select("id").eq("id", payload.designer_id).maybeSingle() : Promise.resolve({ data: true }),
   ]);
   if (!team || !category || !requester || !designer) throw new Error("Invalid team, category, requester, or designer");
+  return supabase;
+}
+
+async function verifyEditableReferences(teamId: string, categoryId: string) {
+  const supabase = await createSupabaseServerClient();
+  const [{ data: team }, { data: category }] = await Promise.all([
+    supabase.from("teams").select("id").eq("id", teamId).maybeSingle(),
+    supabase.from("categories").select("id").eq("id", categoryId).maybeSingle(),
+  ]);
+  if (!team || !category) throw new Error("Invalid team or category");
   return supabase;
 }
 
@@ -163,8 +134,8 @@ export async function updateRequest(formData: FormData) {
   await requireRole("PM");
   const id = text(formData, "id");
   const returnTo = safeReturnPath(formData, "/requests");
-  const payload = requestPayload(formData);
-  const supabase = await verifyReferences(payload);
+  const payload = editableRequestPayload(formData);
+  const supabase = await verifyEditableReferences(payload.team_id, payload.category_id);
   const { error } = await supabase.from("requests").update(payload).eq("id", id);
   if (error) throw new Error(error.message);
   revalidatePath("/dashboard");
