@@ -154,6 +154,28 @@ export async function updateRequest(formData: FormData) {
   redirect(returnTo);
 }
 
+export async function deleteRequests(formData: FormData) {
+  await requireRole("PM");
+  const returnTo = safeReturnPath(formData, "/requests");
+  const ids = [...new Set(formData.getAll("id").map((value) => String(value).trim()).filter(Boolean))];
+  if (!ids.length) throw new Error("No requests selected");
+  if (ids.length > 500) throw new Error("Too many requests selected");
+  // Requests deleted from a team page can only belong to that team.
+  const lockedTeam = teamIdFromReturnPath(returnTo);
+  const supabase = await createSupabaseServerClient();
+  // Chunked so the id list stays within URL length limits.
+  for (let start = 0; start < ids.length; start += 100) {
+    let query = supabase.from("requests").delete().in("id", ids.slice(start, start + 100));
+    if (lockedTeam) query = query.eq("team_id", lockedTeam);
+    const { error } = await query;
+    if (error) throw new Error(error.message);
+  }
+  revalidatePath("/dashboard");
+  revalidatePath("/requests");
+  revalidatePath("/teams");
+  redirect(returnTo);
+}
+
 export async function deleteRequest(formData: FormData) {
   await requireRole("PM");
   const id = text(formData, "id");
