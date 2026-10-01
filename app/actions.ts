@@ -19,15 +19,21 @@ function optional(formData: FormData, name: string): string | null {
 
 function safeReturnPath(formData: FormData, fallback: string): string {
   const value = optional(formData, "returnTo");
-  const allowed = ["/requests", "/dashboard"];
-  if (!value || !allowed.some((path) => value === path || value.startsWith(`${path}?`))) return fallback;
-  return value;
+  if (!value) return fallback;
+  if (value === "/requests" || value.startsWith("/requests?")) return value;
+  if (value === "/dashboard" || value.startsWith("/dashboard?")) return value;
+  if (/^\/teams\/[A-Za-z0-9_-]+$/.test(value)) return value;
+  return fallback;
 }
 
 function positiveInteger(formData: FormData, name: string): number {
   const value = Number(String(formData.get(name) ?? "").trim());
   if (!Number.isInteger(value) || value < 1) throw new Error(`Invalid ${name}`);
   return value;
+}
+
+function teamIdFromReturnPath(path: string): string | null {
+  return path.match(/^\/teams\/([A-Za-z0-9_-]+)$/)?.[1] ?? null;
 }
 
 type ReferencePayload = {
@@ -82,6 +88,7 @@ export async function createRequests(
   formData: FormData,
 ): Promise<{ error: string } | null> {
   const pm = await requireRole("PM");
+  const returnTo = safeReturnPath(formData, "/requests");
 
   let shared: ReferencePayload;
   let date: string;
@@ -94,6 +101,9 @@ export async function createRequests(
       requester_id: pm.id,
       designer_id: null,
     };
+    // Requests created from a team page must belong to that team.
+    const lockedTeam = teamIdFromReturnPath(returnTo);
+    if (lockedTeam && lockedTeam !== shared.team_id) throw new Error("Team does not match the opened team page");
     date = dateForMonth(new Date().toISOString().slice(0, 7));
     rows = bulkRows(formData);
   } catch (error) {
@@ -127,7 +137,7 @@ export async function createRequests(
   revalidatePath("/dashboard");
   revalidatePath("/requests");
   revalidatePath("/teams");
-  redirect("/requests");
+  redirect(returnTo);
 }
 
 export async function updateRequest(formData: FormData) {

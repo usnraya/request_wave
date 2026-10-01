@@ -17,9 +17,13 @@ const emptyRow: Row = { title: "", notionId: "", outputCount: "1" };
 export default function BulkRequestForm({
   teams,
   categories,
+  fixedTeam,
+  returnTo = "/requests",
 }: {
   teams: Team[];
   categories: Category[];
+  fixedTeam?: Team;
+  returnTo?: string;
 }) {
   const [state, action, pending] = useActionState(createRequests, null);
   const [rows, setRows] = useState<Row[]>([emptyRow, emptyRow, emptyRow]);
@@ -39,18 +43,29 @@ export default function BulkRequestForm({
       action={action}
       className="space-y-7 rounded-2xl border border-border bg-card p-5 sm:p-6"
     >
+      <input type="hidden" name="returnTo" value={returnTo} />
       <div className="grid gap-4 sm:grid-cols-1">
-        <label className="block text-sm font-medium">
-          Team
-          <select name="teamId" required className={selectClass}>
-            <option value="">Choose a team</option>
-            {teams.map((team) => (
-              <option key={team.id} value={team.id}>
-                {team.name}
-              </option>
-            ))}
-          </select>
-        </label>
+        {fixedTeam ? (
+          <div className="block text-sm font-medium">
+            Team
+            <input type="hidden" name="teamId" value={fixedTeam.id} />
+            <div className="mt-1.5 flex h-10 w-full items-center rounded-xl border border-input bg-muted/60 px-3 text-[13px] text-muted-foreground">
+              {fixedTeam.name}
+            </div>
+          </div>
+        ) : (
+          <label className="block text-sm font-medium">
+            Team
+            <select name="teamId" required className={selectClass}>
+              <option value="">Choose a team</option>
+              {teams.map((team) => (
+                <option key={team.id} value={team.id}>
+                  {team.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         <label className="block text-sm font-medium">
           Work Area
           <select name="categoryId" required className={selectClass}>

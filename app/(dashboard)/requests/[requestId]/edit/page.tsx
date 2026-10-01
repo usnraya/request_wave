@@ -9,7 +9,7 @@ export default async function EditRequestPage({ params, searchParams }: PageProp
   const { requestId } = await params;
   const rawSearchParams = await searchParams;
   const returnToValue = Array.isArray(rawSearchParams?.returnTo) ? rawSearchParams.returnTo[0] : rawSearchParams?.returnTo;
-  const returnTo = returnToValue && (returnToValue === "/dashboard" || returnToValue.startsWith("/dashboard?") || returnToValue === "/requests" || returnToValue.startsWith("/requests?")) ? returnToValue : "/requests";
+  const returnTo = returnToValue && (returnToValue === "/dashboard" || returnToValue.startsWith("/dashboard?") || returnToValue === "/requests" || returnToValue.startsWith("/requests?") || /^\/teams\/[A-Za-z0-9_-]+$/.test(returnToValue)) ? returnToValue : "/requests";
   const [request, teams, categories] = await Promise.all([
     getRequest(requestId),
     getTeams(),
