@@ -1,5 +1,6 @@
 import DashboardClient from "@/components/dashboard/dashboard-client";
 import { getCategories, getRequests, getTeams } from "@/lib/data";
+import { getCurrentUser } from "@/lib/permissions";
 import type { DashboardFilters } from "@/types/dashboard";
 
 export const dynamic = "force-dynamic";
@@ -14,10 +15,11 @@ export default async function DashboardPage({
   searchParams,
 }: PageProps<"/dashboard">) {
   const params: RawSearchParams = await searchParams;
-  const [requests, categories, teams] = await Promise.all([
+  const [requests, categories, teams, user] = await Promise.all([
     getRequests(),
     getCategories(),
     getTeams(),
+    getCurrentUser(),
   ]);
   const team = first(params.team);
   const category = first(params.category);
@@ -35,6 +37,7 @@ export default async function DashboardPage({
       requests={requests}
       categories={categories}
       teams={teams}
+      canManage={user?.role === "PM"}
     />
   );
 }

@@ -20,7 +20,7 @@ export default function RequestActions({
   return (
     <div className="flex gap-1">
       <Link
-        href={`/requests/${requestId}/edit`}
+        href={`/requests/${requestId}/edit?returnTo=${encodeURIComponent(returnTo)}`}
         aria-label={`Edit ${title}`}
         className="flex size-8 items-center justify-center rounded-full bg-[#FFB400]/15 text-[#a66f00] transition-colors hover:bg-[#FFB400]/25 dark:text-[#ffd166]"
       >

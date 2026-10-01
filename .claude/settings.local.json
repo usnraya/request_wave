@@ -1,7 +1,7 @@
 {
   "env": {
     "ANTHROPIC_BASE_URL": "https://9router.tmdsite.my.id/v1",
-    "ANTHROPIC_AUTH_TOKEN": "sk-3fffd8d460bb1029-nkywkx-6380b60d",
+    "ANTHROPIC_AUTH_TOKEN": "sk-3fffd8d460bb1029-n7ps0i-32a5f2b3",
     "ANTHROPIC_MODEL": "td-normal",
     "ANTHROPIC_DEFAULT_SONNET_MODEL": "td-normal",
     "ANTHROPIC_DEFAULT_OPUS_MODEL": "td-high",

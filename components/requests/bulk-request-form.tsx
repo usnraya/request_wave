@@ -2,25 +2,8 @@
 
 import { useActionState, useState } from "react";
 import { createRequests } from "@/app/actions";
-import { monthKey, today } from "@/lib/date-utils";
 import type { Category } from "@/types/category";
 import type { Team } from "@/types/team";
-
-const monthNames = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-const years = ["2025", "2026"];
 
 const selectClass =
   "mt-1.5 h-10 w-full rounded-xl border border-input bg-background px-3 text-[13px] outline-none transition-colors focus:border-ring focus:ring-2 focus:ring-ring/20";
@@ -56,7 +39,7 @@ export default function BulkRequestForm({
       action={action}
       className="space-y-7 rounded-2xl border border-border bg-card p-5 sm:p-6"
     >
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-1">
         <label className="block text-sm font-medium">
           Team
           <select name="teamId" required className={selectClass}>
@@ -65,28 +48,6 @@ export default function BulkRequestForm({
               <option key={team.id} value={team.id}>
                 {team.name}
               </option>
-            ))}
-          </select>
-        </label>
-        <label className="block text-sm font-medium">
-          Month
-          <select
-            name="month"
-            required
-            defaultValue={monthKey(today())}
-            className={selectClass}
-          >
-            {years.map((year) => (
-              <optgroup key={year} label={year}>
-                {monthNames.map((name, index) => (
-                  <option
-                    key={name}
-                    value={`${year}-${String(index + 1).padStart(2, "0")}`}
-                  >
-                    {name}
-                  </option>
-                ))}
-              </optgroup>
             ))}
           </select>
         </label>

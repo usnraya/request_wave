@@ -16,9 +16,10 @@ function SelectField({ label, name, defaultValue, children, required = true }: {
   return <label className="block text-[13px] font-medium">{label}<select name={name} required={required} defaultValue={defaultValue} className={inputClass}>{children}</select></label>;
 }
 
-export default function RequestForm({ request, teams, categories, users }: { request: Request; teams: Team[]; categories: Category[]; users: User[] }) {
+export default function RequestForm({ request, teams, categories, users, returnTo = "/requests" }: { request: Request; teams: Team[]; categories: Category[]; users: User[]; returnTo?: string }) {
   return <form action={updateRequest} className="space-y-7 rounded-2xl border border-border bg-card p-5 sm:p-6">
     <input type="hidden" name="id" value={request.id} />
+    <input type="hidden" name="returnTo" value={returnTo} />
     <input type="hidden" name="requesterId" value={request.requesterId} />
     <section>
       <h2 className="text-[15px] font-semibold">Request details</h2>
@@ -33,11 +34,11 @@ export default function RequestForm({ request, teams, categories, users }: { req
       </div>
     </section>
     <section className="border-t border-border pt-6">
-      <h2 className="text-[15px] font-semibold">Schedule and status</h2>
+      <h2 className="text-[15px] font-semibold">Status</h2>
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
-        <Field label="Request date" name="requestDate" type="date" defaultValue={request.requestDate} />
-        <Field label="Deadline" name="deadline" type="date" defaultValue={request.deadline} />
-        <Field label="Completed date" name="completedDate" type="date" required={false} defaultValue={request.completedDate} />
+        <input type="hidden" name="requestDate" value={request.requestDate} />
+        <input type="hidden" name="deadline" value={request.deadline} />
+        <input type="hidden" name="completedDate" value={request.completedDate ?? ""} />
         <SelectField label="Priority" name="priority" defaultValue={request.priority}>{["low", "medium", "high", "urgent"].map((value) => <option key={value} value={value}>{value}</option>)}</SelectField>
         <SelectField label="Status" name="status" defaultValue={request.status}>{["new", "in_progress", "waiting_feedback", "revision", "done", "cancelled"].map((value) => <option key={value} value={value}>{value.replaceAll("_", " ")}</option>)}</SelectField>
         <Field label="Estimated hours" name="estimatedHours" type="number" defaultValue={request.estimatedHours} />

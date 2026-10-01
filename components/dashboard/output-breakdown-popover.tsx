@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { Dialog } from "@base-ui/react/dialog";
+import RequestActions from "@/components/requests/request-actions";
 
 export type OutputBreakdownItem = {
   id: string;
@@ -19,6 +20,8 @@ export default function OutputBreakdownPopover({
   sourceLabel,
   groupCount,
   items,
+  canManage,
+  returnTo,
 }: {
   value: number;
   monthLabel: string;
@@ -26,6 +29,8 @@ export default function OutputBreakdownPopover({
   sourceLabel: string;
   groupCount: number;
   items: OutputBreakdownItem[];
+  canManage: boolean;
+  returnTo: string;
 }) {
   const [group, setGroup] = useState("");
   const filtersWorkAreas = sourceLabel === "Work areas";
@@ -112,17 +117,18 @@ export default function OutputBreakdownPopover({
               </div>
 
               <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
-                <div className="sticky top-0 z-10 hidden grid-cols-[minmax(0,1fr)_14rem_5rem] gap-4 border-b border-border bg-card/95 px-6 py-2 text-xs font-medium text-muted-foreground backdrop-blur sm:grid">
+                <div className={`sticky top-0 z-10 hidden gap-4 ${canManage ? "grid-cols-[minmax(0,1fr)_14rem_5rem_5rem]" : "grid-cols-[minmax(0,1fr)_14rem_5rem]"} border-b border-border bg-card/95 px-6 py-2 text-xs font-medium text-muted-foreground backdrop-blur sm:grid`}>
                   <span>Request</span>
                   <span>{groupLabel}</span>
                   <span className="text-right">Outputs</span>
+                  {canManage && <span className="text-right">Actions</span>}
                 </div>
                 {visibleItems.length ? (
                   <ul aria-label={`Requests for ${rowLabel} in ${monthLabel}`}>
                     {visibleItems.map((item) => (
                       <li
                         key={item.id}
-                        className="border-b border-border/70 px-4 py-3 last:border-b-0 odd:bg-card even:bg-muted/30 sm:grid sm:grid-cols-[minmax(0,1fr)_14rem_5rem] sm:items-start sm:gap-4 sm:px-6"
+                        className={`border-b border-border/70 px-4 py-3 last:border-b-0 odd:bg-card even:bg-muted/30 sm:grid sm:items-start sm:gap-4 sm:px-6 ${canManage ? "sm:grid-cols-[minmax(0,1fr)_14rem_5rem_5rem]" : "sm:grid-cols-[minmax(0,1fr)_14rem_5rem]"}`}
                       >
                         <p className="min-w-0 break-words text-sm font-medium leading-5">
                           {item.title}
@@ -136,6 +142,11 @@ export default function OutputBreakdownPopover({
                             ×{item.outputCount}
                           </span>
                         </div>
+                        {canManage && (
+                          <div className="mt-3 sm:mt-0 sm:justify-self-end">
+                            <RequestActions requestId={item.id} title={item.title} returnTo={returnTo} />
+                          </div>
+                        )}
                       </li>
                     ))}
                   </ul>

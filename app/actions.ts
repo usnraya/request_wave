@@ -32,7 +32,8 @@ function optionalUrl(formData: FormData, name: string): string | null {
 
 function safeReturnPath(formData: FormData, fallback: string): string {
   const value = optional(formData, "returnTo");
-  if (!value || (value !== fallback && !value.startsWith(`${fallback}?`))) return fallback;
+  const allowed = ["/requests", "/dashboard"];
+  if (!value || !allowed.some((path) => value === path || value.startsWith(`${path}?`))) return fallback;
   return value;
 }
 
@@ -122,7 +123,7 @@ export async function createRequests(
       requester_id: pm.id,
       designer_id: null,
     };
-    date = dateForMonth(text(formData, "month"));
+    date = dateForMonth(new Date().toISOString().slice(0, 7));
     rows = bulkRows(formData);
   } catch (error) {
     return { error: error instanceof Error ? error.message : "Invalid input" };
@@ -161,6 +162,7 @@ export async function createRequests(
 export async function updateRequest(formData: FormData) {
   await requireRole("PM");
   const id = text(formData, "id");
+  const returnTo = safeReturnPath(formData, "/requests");
   const payload = requestPayload(formData);
   const supabase = await verifyReferences(payload);
   const { error } = await supabase.from("requests").update(payload).eq("id", id);
@@ -168,7 +170,7 @@ export async function updateRequest(formData: FormData) {
   revalidatePath("/dashboard");
   revalidatePath("/requests");
   revalidatePath("/teams");
-  redirect("/requests");
+  redirect(returnTo);
 }
 
 export async function deleteRequest(formData: FormData) {

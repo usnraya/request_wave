@@ -11,11 +11,15 @@ export default function TeamRequestsTable({
   categories,
   requests,
   getSeries,
+  canManage,
+  returnTo,
 }: {
   teams: Team[];
   categories: Category[];
   requests: Request[];
   getSeries: (id: string) => MonthPoint[];
+  canManage: boolean;
+  returnTo: string;
 }) {
   const categoryNameById = new Map(categories.map((category) => [category.id, category.name]));
   const rows = teams.map((team) => ({ team, series: getSeries(team.id) }));
@@ -97,6 +101,8 @@ export default function TeamRequestsTable({
                           sourceLabel="Work areas"
                           groupCount={groupCount}
                           items={items}
+                          canManage={canManage}
+                          returnTo={returnTo}
                         />
                       )}
                     </td>

@@ -31,11 +31,13 @@ export default function DashboardClient({
   requests,
   categories,
   teams,
+  canManage,
 }: {
   initialFilters: FilterState;
   requests: Request[];
   categories: Category[];
   teams: Team[];
+  canManage: boolean;
 }) {
   const router = useRouter();
   const completedRequests = requests.filter((request) => request.status === "done");
@@ -53,6 +55,12 @@ export default function DashboardClient({
     Object.entries(next).forEach(([name, entry]) => { if (entry) params.set(name, entry); });
     router.replace(`/dashboard${params.toString() ? `?${params.toString()}` : ""}`);
   }
+
+  const dashboardReturnTo = (() => {
+    const params = new URLSearchParams();
+    Object.entries(initialFilters).forEach(([name, entry]) => { if (entry) params.set(name, entry); });
+    return `/dashboard${params.toString() ? `?${params.toString()}` : ""}`;
+  })();
 
   return (
     <div className="page-container flex max-w-7xl flex-col gap-6">
@@ -106,6 +114,8 @@ export default function DashboardClient({
               categories={categories}
               requests={filtered}
               getSeries={(teamId) => getMonthlyTeamRequests(filtered, teamId, months)}
+              canManage={canManage}
+              returnTo={dashboardReturnTo}
             />
           ) : (
             <CategoryRequestsTable
@@ -113,6 +123,8 @@ export default function DashboardClient({
               teams={teams}
               requests={filtered}
               getSeries={(categoryId) => getMonthlyCategoryRequests(filtered, categoryId, months)}
+              canManage={canManage}
+              returnTo={dashboardReturnTo}
             />
           )}
         </div>

@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "import:task-25:check": "node scripts/import-task-25.mjs --dry-run",
+    "import:task-25": "node scripts/import-task-25.mjs",
+    "import:task-26:check": "node scripts/import-task-26.mjs --dry-run",
+    "import:task-26": "node scripts/import-task-26.mjs --skip-candidates"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
