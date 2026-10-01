@@ -12,7 +12,7 @@ assert.equal(dateForMonth("2026-09", now), "2026-09-21", "current month → toda
 assert.equal(dateForMonth("2026-07", now), "2026-07-31", "past month → last day");
 assert.equal(dateForMonth("2026-02", now), "2026-02-28", "short month");
 assert.equal(dateForMonth("2024-02", now), "2024-02-29", "leap month");
-assert.throws(() => dateForMonth("2026-10", now), /future/, "next month rejected");
+assert.equal(dateForMonth("2026-12", now), "2026-12-31", "later month → last day");
 assert.throws(() => dateForMonth("2026-13", now), /Invalid month/, "month 13");
 assert.throws(() => dateForMonth("2026-9", now), /Invalid month/, "unpadded month");
 assert.throws(() => dateForMonth("", now), /Invalid month/, "empty month");

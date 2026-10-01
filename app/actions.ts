@@ -104,7 +104,7 @@ export async function createRequests(
     // Requests created from a team page must belong to that team.
     const lockedTeam = teamIdFromReturnPath(returnTo);
     if (lockedTeam && lockedTeam !== shared.team_id) throw new Error("Team does not match the opened team page");
-    date = dateForMonth(new Date().toISOString().slice(0, 7));
+    date = dateForMonth(`${text(formData, "year")}-${text(formData, "month")}`);
     rows = bulkRows(formData);
   } catch (error) {
     return { error: error instanceof Error ? error.message : "Invalid input" };

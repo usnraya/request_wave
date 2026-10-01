@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Dialog } from "@base-ui/react/dialog";
-import { ArrowLeft, Trash2, X } from "lucide-react";
+import { ArrowLeft, Download, Trash2, X } from "lucide-react";
 import { deleteRequests } from "@/app/actions";
 import BulkRequestForm from "@/components/requests/bulk-request-form";
 import RequestActions from "@/components/requests/request-actions";
@@ -19,12 +19,6 @@ export default function TeamDetailView({ team, requests, categories, canManage =
   const returnTo = `/teams/${team.id}`;
   const currentYear = today().getFullYear();
   const [year, setYear] = useState(currentYear);
-  // A successful add redirects back here with new data; close the modal when the list changes.
-  const [seenCount, setSeenCount] = useState(requests.length);
-  if (requests.length !== seenCount) {
-    setSeenCount(requests.length);
-    setAdding(false);
-  }
   const teamAll = requests.filter((request) => request.teamId === team.id);
   const years = Array.from(new Set([currentYear, ...teamAll.map((request) => Number(request.requestDate.slice(0, 4)))])).sort((a, b) => b - a);
   const teamRequests = teamAll.filter((request) => request.requestDate.startsWith(`${year}-`)).sort((a, b) => compareNotionId(a.notionId, b.notionId));
@@ -59,6 +53,18 @@ export default function TeamDetailView({ team, requests, categories, canManage =
     if (!window.confirm(`Delete ${selectedCount} request${selectedCount === 1 ? "" : "s"} (${selectedOutputs} outputs)? This cannot be undone.`)) event.preventDefault();
   }
 
+  // ponytail: CSV (BOM + sep hint) opens in Excel without a dependency; swap to real .xlsx if formatting is needed.
+  function downloadExcel() {
+    const cell = (value: string) => `"${(/^[=+\-@]/.test(value) ? `'${value}` : value).replace(/"/g, '""')}"`;
+    const lines = ["sep=,", ["Notion ID", "Task Title"].map(cell).join(","), ...teamRequests.map((request) => [request.notionId, request.title].map(cell).join(","))];
+    const url = URL.createObjectURL(new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${team.id}-${year}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
   function toggleAll() {
     setSelectedIds(allSelected ? new Set() : new Set(teamRequests.map((request) => request.id)));
   }
@@ -77,6 +83,7 @@ export default function TeamDetailView({ team, requests, categories, canManage =
           <select id="team-year" value={year} onChange={(event) => setYear(Number(event.target.value))} className="h-10 rounded-full border border-input bg-background px-3 text-[13px] outline-none focus:border-ring focus:ring-2 focus:ring-ring/20">
             {years.map((option) => <option key={option} value={option}>{option}</option>)}
           </select>
+          <button type="button" onClick={downloadExcel} disabled={!teamRequests.length} className="inline-flex h-10 cursor-pointer items-center gap-1.5 rounded-full border border-input bg-background px-4 text-[13px] font-medium transition-colors hover:border-primary hover:bg-primary/10 disabled:cursor-not-allowed disabled:opacity-50"><Download className="size-4" />Excel</button>
           {canManage && <button type="button" onClick={() => setAdding(true)} className="h-10 cursor-pointer rounded-full bg-primary px-5 text-[15px] font-medium text-primary-foreground transition-colors hover:bg-[#108513]">New request</button>}
         </div>
       </header>
@@ -98,13 +105,16 @@ export default function TeamDetailView({ team, requests, categories, canManage =
       {canManage && (
         <Dialog.Root open={adding} onOpenChange={setAdding}>
           <Dialog.Portal>
-            <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/40" />
-            <Dialog.Popup className="fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] max-w-5xl -translate-x-1/2 -translate-y-1/2 flex-col overflow-y-auto rounded-2xl border border-border bg-card text-foreground shadow-2xl outline-none">
-              <div className="flex items-center justify-between border-b border-border px-5 py-4 sm:px-6">
-                <Dialog.Title className="text-lg font-semibold">New request</Dialog.Title>
-                <Dialog.Close aria-label="Close" className="rounded-md p-2 text-muted-foreground hover:bg-muted hover:text-foreground"><X className="size-4" /></Dialog.Close>
+            <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/40 transition-opacity duration-150 data-[starting-style]:opacity-0 data-[ending-style]:opacity-0" />
+            <Dialog.Popup className="fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] max-w-3xl -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-2xl border border-border bg-card text-foreground shadow-2xl outline-none transition-all duration-150 data-[starting-style]:scale-95 data-[starting-style]:opacity-0 data-[ending-style]:scale-95 data-[ending-style]:opacity-0">
+              <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-5 py-4 sm:px-6">
+                <Dialog.Title className="truncate text-lg font-semibold">New request · {team.name}</Dialog.Title>
+                <Dialog.Close aria-label="Close" className="cursor-pointer rounded-md p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"><X className="size-4" /></Dialog.Close>
               </div>
-              <div className="p-5 sm:p-6"><BulkRequestForm teams={[team]} categories={categories} fixedTeam={team} returnTo={returnTo} /></div>
+              <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-5">
+                {/* Keyed by list size so rows reset after a successful add. */}
+                <BulkRequestForm key={requests.length} teams={[team]} categories={categories} fixedTeam={team} returnTo={returnTo} />
+              </div>
             </Dialog.Popup>
           </Dialog.Portal>
         </Dialog.Root>

@@ -1,4 +1,4 @@
-import { isFutureMonth, parseISODate, today } from "@/lib/date-utils";
+import { parseISODate, today } from "@/lib/date-utils";
 
 export const maxBulkRows = 50;
 
@@ -18,12 +18,12 @@ function isoDate(date: Date): string {
 
 /**
  * Date the bulk rows are recorded on: today for the current month, otherwise the
- * last day of the selected month, so the rows land in the month the user picked.
+ * last day of the selected month (past or planned), so the rows land in the month
+ * the user picked.
  */
 export function dateForMonth(month: string, now = today()): string {
   if (!/^20\d\d-(0[1-9]|1[0-2])$/.test(month)) throw new Error("Invalid month");
   const first = parseISODate(`${month}-01`);
-  if (isFutureMonth(first, now)) throw new Error("Month cannot be in the future");
   if (
     first.getFullYear() === now.getFullYear() &&
     first.getMonth() === now.getMonth()

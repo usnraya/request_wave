@@ -11,7 +11,8 @@
     "allow": [
       "Bash(npm run *)",
       "PowerShell(npm install recharts)",
-      "Bash(node delete-post-prefix.js*)"
+      "Bash(node delete-post-prefix.js*)",
+      "Bash(node *)"
     ]
   },
   "hasCompletedOnboarding": true

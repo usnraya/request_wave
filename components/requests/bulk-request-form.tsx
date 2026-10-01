@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { createRequests } from "@/app/actions";
+import { today } from "@/lib/date-utils";
 import type { Category } from "@/types/category";
 import type { Team } from "@/types/team";
 
@@ -9,6 +10,11 @@ const selectClass =
   "mt-1.5 h-10 w-full rounded-xl border border-input bg-background px-3 text-[13px] outline-none transition-colors focus:border-ring focus:ring-2 focus:ring-ring/20";
 const inputClass =
   "h-10 w-full rounded-xl border border-input bg-background px-3 text-[13px] outline-none transition-colors focus:border-ring focus:ring-2 focus:ring-ring/20";
+
+const monthNames = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
 
 type Row = { title: string; notionId: string; outputCount: string };
 
@@ -27,6 +33,12 @@ export default function BulkRequestForm({
 }) {
   const [state, action, pending] = useActionState(createRequests, null);
   const [rows, setRows] = useState<Row[]>([emptyRow, emptyRow, emptyRow]);
+  const [now] = useState(() => today());
+  const [selectedYear, setSelectedYear] = useState(String(now.getFullYear()));
+  const [selectedMonth, setSelectedMonth] = useState(
+    String(now.getMonth() + 1).padStart(2, "0"),
+  );
+  const years = [now.getFullYear() - 1, now.getFullYear(), now.getFullYear() + 1].map(String);
 
   function updateRow(index: number, key: keyof Row, value: string) {
     setRows((current) =>
@@ -45,6 +57,40 @@ export default function BulkRequestForm({
     >
       <input type="hidden" name="returnTo" value={returnTo} />
       <div className="grid gap-4 sm:grid-cols-1">
+        <div className="grid grid-cols-2 gap-4">
+          <label className="block text-sm font-medium">
+            Year
+            <select
+              name="year"
+              required
+              value={selectedYear}
+              onChange={(event) => setSelectedYear(event.target.value)}
+              className={selectClass}
+            >
+              {years.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="block text-sm font-medium">
+            Month
+            <select
+              name="month"
+              required
+              value={selectedMonth}
+              onChange={(event) => setSelectedMonth(event.target.value)}
+              className={selectClass}
+            >
+              {monthNames.map((name, index) => (
+                <option key={name} value={String(index + 1).padStart(2, "0")}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
         {fixedTeam ? (
           <div className="block text-sm font-medium">
             Team
