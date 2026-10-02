@@ -6,6 +6,7 @@ import { Dialog } from "@base-ui/react/dialog";
 import { ArrowLeft, Download, Trash2, X } from "lucide-react";
 import { deleteRequests } from "@/app/actions";
 import BulkRequestForm from "@/components/requests/bulk-request-form";
+import MarkdownImportForm from "@/components/requests/markdown-import-form";
 import RequestActions from "@/components/requests/request-actions";
 import { getTotalOutputs } from "@/lib/dashboard-utils";
 import { today } from "@/lib/date-utils";
@@ -16,6 +17,7 @@ import type { Team } from "@/types/team";
 
 export default function TeamDetailView({ team, requests, categories, canManage = false }: { team: Team; requests: Request[]; categories: Category[]; canManage?: boolean }) {
   const [adding, setAdding] = useState(false);
+  const [importing, setImporting] = useState(false);
   const returnTo = `/teams/${team.id}`;
   const currentYear = today().getFullYear();
   const [year, setYear] = useState(currentYear);
@@ -112,8 +114,19 @@ export default function TeamDetailView({ team, requests, categories, canManage =
                 <Dialog.Close aria-label="Close" className="cursor-pointer rounded-md p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"><X className="size-4" /></Dialog.Close>
               </div>
               <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-5">
-                {/* Keyed by list size so rows reset after a successful add. */}
-                <BulkRequestForm key={requests.length} teams={[team]} categories={categories} fixedTeam={team} returnTo={returnTo} />
+                <div className="mb-4 inline-flex rounded-full border border-border p-0.5 text-[13px] font-medium" role="tablist">
+                  {([false, true] as const).map((markdown) => (
+                    <button key={String(markdown)} type="button" role="tab" aria-selected={importing === markdown} onClick={() => setImporting(markdown)} className={`h-8 cursor-pointer rounded-full px-4 transition-colors ${importing === markdown ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+                      {markdown ? "Import Markdown" : "Add manually"}
+                    </button>
+                  ))}
+                </div>
+                {importing ? (
+                  <MarkdownImportForm onlyTeamId={team.id} returnTo={returnTo} />
+                ) : (
+                  /* Keyed by list size so rows reset after a successful add. */
+                  <BulkRequestForm key={requests.length} teams={[team]} categories={categories} fixedTeam={team} returnTo={returnTo} />
+                )}
               </div>
             </Dialog.Popup>
           </Dialog.Portal>

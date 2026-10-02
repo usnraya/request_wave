@@ -1,5 +1,6 @@
 import Link from "next/link";
 import BulkRequestForm from "@/components/requests/bulk-request-form";
+import MarkdownImportForm from "@/components/requests/markdown-import-form";
 import { getCategories, getTeams } from "@/lib/data";
 import { requireRole } from "@/lib/permissions";
 
@@ -17,8 +18,12 @@ export default async function NewRequestPage() {
           Set the shared details, then add each completed design below.
         </p>
       </header>
-      <div className="mt-6">
+      <div className="mt-6 space-y-8">
         <BulkRequestForm teams={teams} categories={categories} />
+        <section>
+          <h2 className="mb-3 text-xl font-medium tracking-tight">Or import a month from Markdown</h2>
+          <MarkdownImportForm />
+        </section>
       </div>
     </div>
   );
