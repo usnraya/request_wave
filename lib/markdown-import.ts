@@ -4,21 +4,6 @@ import type { Team } from "@/types/team";
 
 export const maxMarkdownRows = 200;
 
-const monthNumbers: Record<string, number> = {
-  jan: 1, january: 1,
-  feb: 2, february: 2,
-  mar: 3, march: 3,
-  apr: 4, april: 4,
-  may: 5,
-  jun: 6, june: 6,
-  jul: 7, july: 7,
-  aug: 8, august: 8,
-  sep: 9, september: 9,
-  oct: 10, october: 10,
-  nov: 11, november: 11,
-  dec: 12, december: 12,
-};
-
 const categoryAliases = new Map([
   ["campaign/event", "campaign / event"],
   ["property event / merchandise", "merchandise / property event"],
@@ -27,10 +12,9 @@ const categoryAliases = new Map([
 export type MarkdownSourceRow = {
   notionId: string;
   title: string;
-  outputCount: number | null;
   usage: string;
   workArea: string;
-  deadline: string;
+  outputCount: number | null;
 };
 
 // One entry per (row, team): a row shared by two teams is imported once for each.
@@ -67,17 +51,17 @@ export function normalizeMarkdownValue(value: string): string {
   return value.trim().toLowerCase().replace(/[()]/g, "").replace(/\s+/g, " ");
 }
 
+// Expected row order: ID | Task | Lokasi | Area | Output. A trailing deadline cell is ignored.
 export function parseTaskMarkdown(text: string): MarkdownSourceRow[] {
   return text.split(/\r?\n/)
     .filter((line) => line.trim().startsWith("| DESIGN-"))
     .map((line) => line.trim().replace(/^\||\|$/g, "").split("|").map((cell) => cell.trim()))
-    .map(([notionId = "", title = "", output, usage = "", workArea = "", deadline = ""]) => ({
+    .map(([notionId = "", title = "", usage = "", workArea = "", output]) => ({
       notionId,
       title,
-      outputCount: output?.trim() ? Number(output.trim()) : null,
       usage,
       workArea,
-      deadline,
+      outputCount: output?.trim() ? Number(output.trim()) : null,
     }));
 }
 
@@ -101,15 +85,9 @@ function teamsFor(usage: string, teams: Team[]) {
   return { found: [...found.values()], unknown };
 }
 
-function deadlineMonth(deadline: string): number | null {
-  const name = deadline.match(/\b(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b/i)?.[1];
-  return name ? monthNumbers[name.toLowerCase()] : null;
-}
-
 export function classifyMarkdownRows(sourceRows: MarkdownSourceRow[], options: MarkdownClassifyOptions): MarkdownImportRow[] {
   const { month, teams, categories, existing, onlyTeamId } = options;
   const date = dateForMonth(month); // throws on an invalid month
-  const monthNumber = Number(month.slice(5, 7));
   const seen = new Set<string>();
 
   return sourceRows.flatMap((source): MarkdownImportRow[] => {
@@ -124,12 +102,10 @@ export function classifyMarkdownRows(sourceRows: MarkdownSourceRow[], options: M
       categoryName: category?.name ?? null,
     };
     const invalid = (reason: string): MarkdownImportRow[] => [{ ...base, status: "invalid", reason }];
-    const rowMonth = deadlineMonth(source.deadline);
 
     if (!/^DESIGN-[A-Za-z0-9_-]+$/.test(source.notionId)) return invalid("Notion ID is missing or invalid");
     if (!source.title) return invalid("Title is missing");
     if (source.outputCount === null || !Number.isInteger(source.outputCount) || source.outputCount < 1) return invalid("Output Task must be a positive whole number");
-    if (rowMonth !== null && rowMonth !== monthNumber) return invalid(`Deadline (${source.deadline}) is outside the selected month`);
     if (!category) return invalid(`Unknown Work Area: ${source.workArea || "(blank)"}`);
     if (!found.length && !unknown.length) return invalid("No team found in Usage Location");
 

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireRole } from "@/lib/permissions";
-import { dateForMonth, parseBulkRows, type BulkRow } from "@/lib/bulk-requests";
+import { dateForMonth, monthDateRange, parseBulkRows, type BulkRow } from "@/lib/bulk-requests";
 import {
   classifyMarkdownRows,
   existingKey,
@@ -16,7 +16,7 @@ import type { Category } from "@/types/category";
 import type { Team } from "@/types/team";
 
 // Re-parses and re-classifies server-side; the client preview is never trusted.
-async function getMarkdownContext(formData: FormData, onlyTeamId?: string) {
+async function getMarkdownContext(formData: FormData, onlyTeamId?: string, ignoreExisting = false) {
   const markdown = text(formData, "markdown");
   const month = `${text(formData, "year")}-${text(formData, "month")}`;
   const sourceRows = parseTaskMarkdown(markdown);
@@ -37,7 +37,7 @@ async function getMarkdownContext(formData: FormData, onlyTeamId?: string) {
     month,
     teams: (teams ?? []).map((t) => ({ id: t.id, name: t.name, shortName: t.short_name })) as Team[],
     categories: (categories ?? []) as Category[],
-    existing: new Set((existingResult.data ?? []).map((r) => existingKey(r.team_id, r.notion_id))),
+    existing: ignoreExisting ? new Set() : new Set((existingResult.data ?? []).map((r) => existingKey(r.team_id, r.notion_id))),
     onlyTeamId,
   });
   return { supabase, rows, summary: summarizeMarkdownRows(rows), year: month.slice(0, 4) };
@@ -51,6 +51,30 @@ export async function previewMarkdownImport(formData: FormData) {
   } catch (error) {
     return { error: error instanceof Error ? error.message : "Invalid Markdown import" };
   }
+}
+
+function markdownRequestPayload(pmId: string, year: string, rows: Awaited<ReturnType<typeof getMarkdownContext>>["rows"]) {
+  return rows.filter((row) => row.status === "new").map((row) => ({
+    id: crypto.randomUUID(),
+    request_code: `REQ-${year}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`,
+    notion_id: row.notionId,
+    title: row.title,
+    team_id: row.teamId,
+    category_id: row.categoryId,
+    requester_id: pmId,
+    designer_id: null,
+    request_date: row.date,
+    deadline: row.date,
+    completed_date: row.date,
+    priority: "medium" as const,
+    status: "done" as const,
+    estimated_hours: 0,
+    actual_hours: null,
+    output_count: row.outputCount,
+    description: `Source: Markdown import. Usage Location: ${row.usage}. Work Area: ${row.workArea}.`,
+    figma_url: null,
+    drive_url: null,
+  }));
 }
 
 export async function importMarkdownRequests(_state: { error?: string } | null, formData: FormData) {
@@ -67,27 +91,7 @@ export async function importMarkdownRequests(_state: { error?: string } | null, 
   const { supabase, rows, summary, year } = context;
   const newRows = rows.filter((row) => row.status === "new");
   if (!newRows.length) return { error: `No new requests to import (${summary.duplicateRows} duplicate, ${summary.invalidRows} invalid)` };
-  const { error } = await supabase.from("requests").insert(newRows.map((row) => ({
-    id: crypto.randomUUID(),
-    request_code: `REQ-${year}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`,
-    notion_id: row.notionId,
-    title: row.title,
-    team_id: row.teamId,
-    category_id: row.categoryId,
-    requester_id: pm.id,
-    designer_id: null,
-    request_date: row.date,
-    deadline: row.date,
-    completed_date: row.date,
-    priority: "medium" as const,
-    status: "done" as const,
-    estimated_hours: 0,
-    actual_hours: null,
-    output_count: row.outputCount,
-    description: `Source: Markdown import. Deadline reference: ${row.deadline}. Usage Location: ${row.usage}. Work Area: ${row.workArea}.`,
-    figma_url: null,
-    drive_url: null,
-  })));
+  const { error } = await supabase.from("requests").insert(markdownRequestPayload(pm.id, year, rows));
   if (error) return { error: error.message };
   revalidatePath("/dashboard");
   revalidatePath("/requests");
@@ -272,6 +276,51 @@ export async function deleteRequest(formData: FormData) {
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.from("requests").delete().eq("id", id);
   if (error) throw new Error(error.message);
+  revalidatePath("/dashboard");
+  revalidatePath("/requests");
+  revalidatePath("/teams");
+  redirect(returnTo);
+}
+
+export async function replaceMarkdownMonth(_state: { error?: string } | null, formData: FormData) {
+  const pm = await requireRole("PM");
+  const returnTo = safeReturnPath(formData, "/requests");
+  if (teamIdFromReturnPath(returnTo) || optional(formData, "onlyTeamId")) return { error: "Replace month is only available from the main import page" };
+  if (optional(formData, "confirmReplace") !== "yes") return { error: "Confirm replacing the selected month before continuing" };
+
+  let context: Awaited<ReturnType<typeof getMarkdownContext>>;
+  try {
+    context = await getMarkdownContext(formData, undefined, true);
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : "Invalid Markdown import" };
+  }
+  const { supabase, rows, summary, year } = context;
+  const newRows = rows.filter((row) => row.status === "new");
+  if (!newRows.length) return { error: `Nothing to import; month was not changed (${summary.duplicateRows} duplicate, ${summary.invalidRows} invalid)` };
+
+  let range: { start: string; end: string };
+  try {
+    range = monthDateRange(`${text(formData, "year")}-${text(formData, "month")}`);
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : "Invalid month" };
+  }
+  const { data: existingMonthRows, error: selectError } = await supabase
+    .from("requests")
+    .select("id")
+    .gte("request_date", range.start)
+    .lt("request_date", range.end);
+  if (selectError) return { error: selectError.message };
+  const monthIds = (existingMonthRows ?? []).map((row) => row.id);
+  for (let start = 0; start < monthIds.length; start += 100) {
+    const { error: deleteError } = await supabase
+      .from("requests")
+      .delete()
+      .in("id", monthIds.slice(start, start + 100));
+    if (deleteError) return { error: deleteError.message };
+  }
+
+  const { error: insertError } = await supabase.from("requests").insert(markdownRequestPayload(pm.id, year, rows));
+  if (insertError) return { error: `Month cleared, but import failed: ${insertError.message}` };
   revalidatePath("/dashboard");
   revalidatePath("/requests");
   revalidatePath("/teams");

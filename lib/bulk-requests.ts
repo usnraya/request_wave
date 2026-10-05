@@ -33,6 +33,17 @@ export function dateForMonth(month: string, now = today()): string {
   return isoDate(new Date(first.getFullYear(), first.getMonth() + 1, 0));
 }
 
+export function monthDateRange(month: string): { start: string; end: string } {
+  if (!/^20\d\d-(0[1-9]|1[0-2])$/.test(month)) throw new Error("Invalid month");
+  const [year, monthNumber] = month.split("-").map(Number);
+  const nextYear = monthNumber === 12 ? year + 1 : year;
+  const nextMonth = monthNumber === 12 ? 1 : monthNumber + 1;
+  return {
+    start: `${month}-01`,
+    end: `${nextYear}-${String(nextMonth).padStart(2, "0")}-01`,
+  };
+}
+
 /**
  * Pairs the repeated title/notionId inputs into rows, dropping rows the user left
  * entirely blank. Row numbers in errors match the numbers shown in the form.

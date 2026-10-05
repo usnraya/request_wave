@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState, useTransition } from "react";
-import { importMarkdownRequests, previewMarkdownImport } from "@/app/actions";
+import { importMarkdownRequests, previewMarkdownImport, replaceMarkdownMonth } from "@/app/actions";
 import { today } from "@/lib/date-utils";
 import type { MarkdownImportRow, MarkdownImportSummary } from "@/lib/markdown-import";
 
@@ -25,6 +25,9 @@ export default function MarkdownImportForm({
   returnTo?: string;
 }) {
   const [state, action, pending] = useActionState(importMarkdownRequests, null);
+  const [replaceState, replaceAction, replacing] = useActionState(replaceMarkdownMonth, null);
+  const [replaceMonth, setReplaceMonth] = useState(false);
+  const [replaceConfirmed, setReplaceConfirmed] = useState(false);
   const [now] = useState(() => today());
   const [year, setYear] = useState(String(now.getFullYear()));
   const [month, setMonth] = useState(String(now.getMonth() + 1).padStart(2, "0"));
@@ -60,11 +63,14 @@ export default function MarkdownImportForm({
 
   const summary = preview?.summary;
   const teams = summary ? Object.entries(summary.byTeam).sort(([a], [b]) => a.localeCompare(b)) : [];
+  const selectedMonthLabel = `${monthNames[Number(month) - 1]} ${year}`;
+
+  function confirmReplace(event: React.FormEvent<HTMLFormElement>) {
+    if (!replaceConfirmed || !window.confirm(`Replace all requests in ${selectedMonthLabel}? This deletes manually entered requests in that month before importing ${summary?.newRows ?? 0} Markdown requests.`)) event.preventDefault();
+  }
 
   return (
-    <form action={action} className="space-y-6 rounded-2xl border border-border bg-card p-5 sm:p-6">
-      <input type="hidden" name="returnTo" value={returnTo} />
-      <input type="hidden" name="markdown" value={markdown} />
+    <div className="space-y-6 rounded-2xl border border-border bg-card p-5 sm:p-6">
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block text-sm font-medium">
           Month
@@ -109,7 +115,7 @@ export default function MarkdownImportForm({
           className="mt-1.5 block w-full cursor-pointer text-[13px] file:mr-3 file:h-10 file:cursor-pointer file:rounded-full file:border file:border-border file:bg-background file:px-4 file:text-[13px] file:font-medium hover:file:border-primary"
         />
         <span className="mt-1 block text-xs font-normal text-muted-foreground">
-          1 file = 1 month. Every row is dated to the selected month; Team comes from Usage Location, category from Work Area.
+          Format: ID | Task | Lokasi | Area | Output. Deadline is optional and ignored; every row uses the selected month. Team comes from Lokasi, category from Area.
           {onlyTeamId && " Only this team's rows are imported."}
         </span>
       </label>
@@ -134,8 +140,8 @@ export default function MarkdownImportForm({
                   <th className="px-3 py-2 font-medium">ID</th>
                   <th className="px-3 py-2 font-medium">Title</th>
                   <th className="px-3 py-2 font-medium">Team</th>
-                  <th className="px-3 py-2 font-medium">Work Area</th>
-                  <th className="px-3 py-2 text-right font-medium">Out</th>
+                  <th className="px-3 py-2 font-medium">Area</th>
+                  <th className="px-3 py-2 text-right font-medium">Output</th>
                   <th className="px-3 py-2 font-medium">Status</th>
                 </tr>
               </thead>
@@ -158,15 +164,40 @@ export default function MarkdownImportForm({
         </div>
       )}
 
-      {state?.error && <p className="text-sm text-destructive" role="alert">{state.error}</p>}
+      <form action={replaceMonth ? replaceAction : action} onSubmit={replaceMonth ? confirmReplace : undefined} className="space-y-6">
+        <input type="hidden" name="returnTo" value={returnTo} />
+        <input type="hidden" name="markdown" value={markdown} />
+        <input type="hidden" name="year" value={year} />
+        <input type="hidden" name="month" value={month} />
+        {replaceMonth && <input type="hidden" name="confirmReplace" value="yes" />}
 
-      <button
-        type="submit"
-        disabled={pending || checking || !summary || summary.newRows === 0}
-        className="h-10 cursor-pointer rounded-full bg-primary px-5 text-[15px] font-medium text-primary-foreground transition-colors hover:bg-[#108513] disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        {pending ? "Importing…" : `Import ${summary?.newRows ?? 0} request${summary?.newRows === 1 ? "" : "s"}`}
-      </button>
-    </form>
+        {replaceMonth && (
+          <label className="block rounded-xl border border-destructive/30 bg-destructive/5 p-3 text-sm">
+            <span className="font-medium text-destructive">Replace all requests in {selectedMonthLabel}</span>
+            <span className="mt-1 block text-xs text-muted-foreground">This deletes every request in the selected month, including manually entered requests, then imports the valid Markdown rows.</span>
+            <span className="mt-2 flex items-center gap-2 text-xs font-medium"><input type="checkbox" checked={replaceConfirmed} onChange={(event) => setReplaceConfirmed(event.target.checked)} className="size-4 accent-destructive" />I understand this will delete the selected month</span>
+          </label>
+        )}
+
+        {replaceState?.error && <p className="text-sm text-destructive" role="alert">{replaceState.error}</p>}
+        {state?.error && !replaceMonth && <p className="text-sm text-destructive" role="alert">{state.error}</p>}
+
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="submit"
+            disabled={pending || replacing || checking || !summary || summary.newRows === 0 || (replaceMonth && !replaceConfirmed)}
+            className="h-10 cursor-pointer rounded-full bg-primary px-5 text-[15px] font-medium text-primary-foreground transition-colors hover:bg-[#108513] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {replacing ? "Replacing…" : pending ? "Importing…" : replaceMonth ? `Replace ${summary?.newRows ?? 0} requests` : `Import ${summary?.newRows ?? 0} request${summary?.newRows === 1 ? "" : "s"}`}
+          </button>
+          {!onlyTeamId && (
+            <label className="inline-flex items-center gap-2 text-sm font-medium text-destructive">
+              <input type="checkbox" checked={replaceMonth} onChange={(event) => { setReplaceMonth(event.target.checked); setReplaceConfirmed(false); }} className="size-4 accent-destructive" />
+              Replace selected month
+            </label>
+          )}
+        </div>
+      </form>
+    </div>
   );
 }

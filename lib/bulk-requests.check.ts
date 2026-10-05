@@ -3,7 +3,7 @@
  *   npx tsx lib/bulk-requests.check.ts
  */
 import assert from "node:assert/strict";
-import { dateForMonth, maxBulkRows, parseBulkRows } from "./bulk-requests";
+import { dateForMonth, maxBulkRows, monthDateRange, parseBulkRows } from "./bulk-requests";
 
 const now = new Date(2026, 8, 21); // 2026-09-21
 
@@ -16,6 +16,11 @@ assert.equal(dateForMonth("2026-12", now), "2026-12-31", "later month → last d
 assert.throws(() => dateForMonth("2026-13", now), /Invalid month/, "month 13");
 assert.throws(() => dateForMonth("2026-9", now), /Invalid month/, "unpadded month");
 assert.throws(() => dateForMonth("", now), /Invalid month/, "empty month");
+
+// monthDateRange
+assert.deepEqual(monthDateRange("2026-09"), { start: "2026-09-01", end: "2026-10-01" });
+assert.deepEqual(monthDateRange("2026-12"), { start: "2026-12-01", end: "2027-01-01" });
+assert.throws(() => monthDateRange("2026-9"), /Invalid month/, "unpadded range month");
 
 // parseBulkRows
 assert.deepEqual(
