@@ -91,6 +91,7 @@ export default function DashboardClient({
       <DashboardCard
         title="Outputs by"
         subtitle={`${periodLabel} · ${getTotalOutputs(filtered)} completed outputs`}
+        help="Rincian output per tim atau per area kerja, bulan demi bulan. Klik angka untuk melihat rinciannya."
         action={
           <label className="flex shrink-0 items-center gap-2 text-[13px] text-muted-foreground">
             <span className="sr-only">Group requests by</span>

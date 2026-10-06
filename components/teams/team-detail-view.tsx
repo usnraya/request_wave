@@ -8,6 +8,7 @@ import { deleteRequests } from "@/app/actions";
 import BulkRequestForm from "@/components/requests/bulk-request-form";
 import MarkdownImportForm from "@/components/requests/markdown-import-form";
 import RequestActions from "@/components/requests/request-actions";
+import InfoTooltip from "@/components/ui/info-tooltip";
 import { getTotalOutputs } from "@/lib/dashboard-utils";
 import { today } from "@/lib/date-utils";
 import { compareNotionId } from "@/lib/notion-id";
@@ -92,7 +93,7 @@ export default function TeamDetailView({ team, requests, categories, canManage =
       <div className="flex items-center justify-between gap-3 border-b border-border py-3 text-sm text-muted-foreground">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <span>{selectedCount} selected{selectedCount > 0 && ` · ${selectedOutputs} outputs`}</span>
-          <span className="font-medium text-foreground">Total outputs {year}: <span className="tabular-nums">{totalOutputs}</span></span>
+          <span className="inline-flex items-center gap-1 font-medium text-foreground">Total outputs {year}: <span className="tabular-nums">{totalOutputs}</span><InfoTooltip label="Total outputs" text={`Jumlah semua output selesai tim ini sepanjang ${year}.`} /></span>
           {canManage && selectedCount > 0 && (
             <form action={deleteRequests} onSubmit={confirmBulkDelete}>
               <input type="hidden" name="returnTo" value={returnTo} />

@@ -7,6 +7,7 @@ import type { Request } from "@/types/request";
 import type { Team } from "@/types/team";
 import { getMonthRange, getMonthlyCategoryRequests } from "@/lib/dashboard-utils";
 import { today } from "@/lib/date-utils";
+import InfoTooltip from "@/components/ui/info-tooltip";
 
 export default function TeamsClient({ requests, categories, teams }: { requests: Request[]; categories: Category[]; teams: Team[] }) {
   const currentYear = today().getFullYear();
@@ -21,7 +22,10 @@ export default function TeamsClient({ requests, categories, teams }: { requests:
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-10">
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-border pb-6">
         <div>
-          <h1 className="text-3xl font-medium tracking-tight">Teams</h1>
+          <div className="flex items-center gap-1">
+            <h1 className="text-3xl font-medium tracking-tight">Teams</h1>
+            <InfoTooltip label="Teams" text="Bandingkan jumlah output selesai setiap area kerja dan bulan." />
+          </div>
           <p className="mt-2 text-[15px] text-muted-foreground">Compare completed design activity by work area.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">

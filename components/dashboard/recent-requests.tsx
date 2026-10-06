@@ -32,6 +32,7 @@ export default function RecentRequests({
     <DashboardCard
       title="Recent Requests"
       subtitle="Latest completed requests in the selected view"
+      help="Request selesai terbaru sesuai filter yang dipilih."
       className="border-t-4 border-t-[#16B1FF]"
     >
       {requests.length ? (

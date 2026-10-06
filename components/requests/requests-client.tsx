@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import CategorySidebar from "./category-sidebar";
+import InfoTooltip from "@/components/ui/info-tooltip";
 import RequestCard from "./request-card";
 import type { Category } from "@/types/category";
 import type { DashboardFilters } from "@/types/dashboard";
@@ -75,7 +76,10 @@ export default function RequestsClient({
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-10">
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-border pb-6">
         <div>
-          <h1 className="text-3xl font-medium tracking-tight text-primary">Requests</h1>
+          <div className="flex items-center gap-1">
+            <h1 className="text-3xl font-medium tracking-tight text-primary">Requests</h1>
+            <InfoTooltip label="Requests" text="Lihat dan cari pekerjaan desain yang sudah selesai berdasarkan tim dan area kerja." />
+          </div>
           <p className="mt-2 text-[15px] text-muted-foreground">
             Browse completed design work by work area and team.
           </p>
@@ -117,9 +121,15 @@ export default function RequestsClient({
         />
         <section aria-live="polite" className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold">
-              {getTotalOutputs(filtered)} outputs
-            </h2>
+            <div className="flex items-center gap-1">
+              <h2 className="text-sm font-semibold">
+                {getTotalOutputs(filtered)} outputs
+              </h2>
+              <InfoTooltip
+                label="outputs"
+                text="Jumlah output dari request yang sedang ditampilkan (setelah filter dan pencarian)."
+              />
+            </div>
             {totalPages > 1 && (
               <p className="text-xs text-muted-foreground">
                 Page {currentPage} of {totalPages}
