@@ -20,7 +20,7 @@ export default function LoginPage() {
             <span className="rounded-md bg-white px-1.5 py-1">
               <Image src={timedoorLogo} alt="Timedoor Academy" sizes="120px" className="h-auto w-28 max-w-full object-contain" />
             </span>
-            <span className="pt-2 text-sm font-semibold tracking-tight">Request Wave</span>
+            <span className="pt-2 text-sm font-semibold tracking-tight">Output Overview</span>
           </div>
           <h1 className="mt-10 text-center text-3xl font-medium tracking-tight">Welcome back</h1>
           <p className="mt-2 text-center text-[15px] text-muted-foreground">View creative team&apos;s activity.
@@ -32,4 +32,4 @@ export default function LoginPage() {
   );
 }
 
-export const metadata = { title: "Sign in | Request Wave" };
+export const metadata = { title: "Sign in | Output Overview" };

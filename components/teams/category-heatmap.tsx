@@ -43,7 +43,7 @@ export default function CategoryHeatmap({
     <DashboardCard
       title="Monthly Outputs Heatmap"
       subtitle={`${categories.length} work areas across 12 months`}
-      help="Setiap kotak = jumlah output satu area kerja di satu bulan. Makin gelap hijaunya, makin banyak output."
+      help="Each cell shows the output count for one work area in one month. Darker green means more outputs."
       action={<Legend />}
     >
       <div className="overflow-x-auto rounded-lg border border-border/80">

@@ -42,4 +42,4 @@ export default async function DashboardPage({
   );
 }
 
-export const metadata = { title: "Dashboard | Request Wave" };
+export const metadata = { title: "Dashboard | Output Overview" };

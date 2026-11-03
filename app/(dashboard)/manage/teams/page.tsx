@@ -6,4 +6,4 @@ export default async function ManageTeamsPage() {
   return <TeamsManager teams={teams} />;
 }
 
-export const metadata = { title: "Teams | Request Wave" };
+export const metadata = { title: "Teams | Output Overview" };

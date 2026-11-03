@@ -4,10 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { useEffect } from "react";
-import { ListChecks, PanelsTopLeft, Settings2, Users, X } from "lucide-react";
+import { ExternalLink, Globe2, ListChecks, PanelsTopLeft, Settings2, Users, X } from "lucide-react";
 import cobee from "@/cobee/Cobee 02.png";
 import timedoorLogo from "@/timedoor-academy-2022-black-green.png";
 import { Button } from "@/components/ui/button";
+import InfoTooltip from "@/components/ui/info-tooltip";
 import { cn } from "@/lib/utils";
 import type { User } from "@/types/user";
 
@@ -90,7 +91,24 @@ export default function NavigationDrawer({
             );
           })}
         </nav>
-        <div className="mt-auto overflow-hidden rounded-2xl border border-sidebar-border bg-sidebar-accent/60 px-3 pt-3">
+        <p className="mt-auto px-3 text-[11px] font-medium uppercase tracking-[0.12em] text-sidebar-foreground/55">Resources</p>
+        <div className="mt-3 flex items-center gap-1">
+          <a
+            href="https://design-library-rosy.vercel.app/"
+            target="_blank"
+            rel="noreferrer"
+            className="group flex min-w-0 flex-1 items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          >
+            <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-[#16b1ff]/15 text-[#0a6ea3] dark:text-[#7fd4ff]">
+              <Globe2 className="size-4" aria-hidden="true" />
+            </span>
+            <span className="truncate">Design Library</span>
+            <ExternalLink className="ml-auto size-3.5 shrink-0 text-sidebar-foreground/40 transition-colors group-hover:text-primary" aria-hidden="true" />
+            <span className="sr-only">(opens in a new tab)</span>
+          </a>
+          <InfoTooltip label="Design Library" text="Browse approved design references, assets, and resources. Opens in a new tab." />
+        </div>
+        <div className="mt-4 overflow-hidden rounded-2xl border border-sidebar-border bg-sidebar-accent/60 px-3 pt-3">
           <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-sidebar-foreground/55">Keep it moving</p>
           <p className="mt-1 max-w-[125px] text-xs leading-5 text-sidebar-foreground/75">Your design queue is in good hands.</p>
           <Image src={cobee} alt="" sizes="100px" className="ml-auto mt-1 block h-auto w-24" />

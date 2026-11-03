@@ -6,9 +6,9 @@ import type { Request } from "@/types/request";
 
 export default function DashboardSummary({ requests, teamCount, categoryCount }: { requests: Request[]; teamCount: number; categoryCount: number }) {
   const values = [
-    ["Total outputs", getTotalRequests(requests), CheckCircle2, "border-t-primary", "text-primary", "Jumlah semua hasil desain yang sudah selesai pada tampilan ini. Satu request bisa menghasilkan lebih dari satu output."],
-    ["Teams", teamCount, UsersRound, "border-t-[#FFB400]", "text-[#b47d00]", "Jumlah tim yang punya request selesai pada tampilan ini."],
-    ["Work Areas", categoryCount, Tags, "border-t-[#8A8D93]", "text-secondary", "Jumlah jenis pekerjaan (mis. Social Media, Campaign) yang muncul pada tampilan ini."],
+    ["Total outputs", getTotalRequests(requests), CheckCircle2, "border-t-primary", "text-primary", "Total completed design outputs in this view. One request can produce more than one output."],
+    ["Teams", teamCount, UsersRound, "border-t-[#FFB400]", "text-[#b47d00]", "Number of teams with completed requests in this view."],
+    ["Work Areas", categoryCount, Tags, "border-t-[#8A8D93]", "text-secondary", "Number of work areas (for example, Social Media or Campaign) shown in this view."],
   ] as const;
 
   return (

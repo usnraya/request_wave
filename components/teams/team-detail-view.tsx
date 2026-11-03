@@ -93,7 +93,7 @@ export default function TeamDetailView({ team, requests, categories, canManage =
       <div className="flex items-center justify-between gap-3 border-b border-border py-3 text-sm text-muted-foreground">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <span>{selectedCount} selected{selectedCount > 0 && ` · ${selectedOutputs} outputs`}</span>
-          <span className="inline-flex items-center gap-1 font-medium text-foreground">Total outputs {year}: <span className="tabular-nums">{totalOutputs}</span><InfoTooltip label="Total outputs" text={`Jumlah semua output selesai tim ini sepanjang ${year}.`} /></span>
+          <span className="inline-flex items-center gap-1 font-medium text-foreground">Total outputs {year}: <span className="tabular-nums">{totalOutputs}</span><InfoTooltip label="Total outputs" text={`Total completed outputs for this team throughout ${year}.`} /></span>
           {canManage && selectedCount > 0 && (
             <form action={deleteRequests} onSubmit={confirmBulkDelete}>
               <input type="hidden" name="returnTo" value={returnTo} />

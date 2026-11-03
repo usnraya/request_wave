@@ -51,7 +51,7 @@ export function normalizeMarkdownValue(value: string): string {
   return value.trim().toLowerCase().replace(/[()]/g, "").replace(/\s+/g, " ");
 }
 
-// Expected row order: ID | Task | Lokasi | Area | Output. A trailing deadline cell is ignored.
+// Expected row order: ID | Task | Location | Work Area | Output. A trailing deadline cell is ignored.
 export function parseTaskMarkdown(text: string): MarkdownSourceRow[] {
   return text.split(/\r?\n/)
     .filter((line) => line.trim().startsWith("| DESIGN-"))

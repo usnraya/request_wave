@@ -78,7 +78,7 @@ export default function RequestsClient({
         <div>
           <div className="flex items-center gap-1">
             <h1 className="text-3xl font-medium tracking-tight text-primary">Requests</h1>
-            <InfoTooltip label="Requests" text="Lihat dan cari pekerjaan desain yang sudah selesai berdasarkan tim dan area kerja." />
+            <InfoTooltip label="Requests" text="Browse and search completed design work by team and work area." />
           </div>
           <p className="mt-2 text-[15px] text-muted-foreground">
             Browse completed design work by work area and team.
@@ -127,7 +127,7 @@ export default function RequestsClient({
               </h2>
               <InfoTooltip
                 label="outputs"
-                text="Jumlah output dari request yang sedang ditampilkan (setelah filter dan pencarian)."
+                text="Number of outputs from the requests currently shown after filtering and searching."
               />
             </div>
             {totalPages > 1 && (

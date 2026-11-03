@@ -24,7 +24,7 @@ const teams = [
 
 const md = `# Task Design
 
-| ID | Task | Lokasi | Area | Output |
+| ID | Task | Location | Work Area | Output |
 |---|---|---|---|---|
 | DESIGN-1 | ✅Edit - Ads | [Overseas] Mena, [Team] Marketing Team (Online), [Team] Overseas | Meta Ads / Custom Ads | 1 | Aug 5 → Aug 7 |
 | DESIGN-2 | Design A | Timedoor Academy | Content Media Social | 2 |

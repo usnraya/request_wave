@@ -6,4 +6,4 @@ export default async function ManageUsersPage() {
   return <UsersManager users={users} />;
 }
 
-export const metadata = { title: "Users | Request Wave" };
+export const metadata = { title: "Users | Output Overview" };

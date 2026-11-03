@@ -6,7 +6,7 @@ export default function MonthlyTotal({ months }: { months: MonthPoint[] }) {
     <DashboardCard
       title="Monthly total"
       subtitle="Completed outputs by month"
-      help="Total output selesai per bulan, mengikuti filter tahun dan tim di atas."
+      help="Completed outputs per month, based on the year and team filters above."
     >
       <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
         {months.map((month) => (

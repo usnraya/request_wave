@@ -11,8 +11,8 @@ const poppins = Poppins({
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Request Wave | Designer Academy",
-  description: "Design team request monitor.",
+  title: "Output Overview | Designer Academy",
+  description: "Track design team requests and completed output.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

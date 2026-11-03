@@ -37,7 +37,7 @@ export default function Topbar({ onMenu, user }: { onMenu: () => void; user: Use
   return (
     <header className={cn("sticky top-0 z-30 flex h-[68px] items-center bg-background/90 px-4 shadow-sm shadow-[#2e263d]/[0.04] backdrop-blur sm:px-6 lg:ml-64 lg:px-10", isRequestsArea ? "border-b-primary" : "border-b-transparent")}>
       <Button variant="ghost" size="icon" className="lg:hidden" onClick={onMenu} aria-label="Open navigation"><Menu /></Button>
-      <Link href="/dashboard" className="text-lg font-semibold tracking-tight text-foreground">Request Wave</Link>
+      <Link href="/dashboard" className="text-lg font-semibold tracking-tight text-foreground">Output Overview</Link>
       <span className="mx-3 hidden h-5 w-0.5 bg-primary sm:block" aria-hidden="true" />
       <div className="hidden text-[13px] font-medium text-muted-foreground sm:block">Design workspace</div>
       <div className="ml-auto flex items-center gap-2">

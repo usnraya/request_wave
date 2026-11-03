@@ -6,4 +6,4 @@ export default async function ManageWorkAreasPage() {
   return <CategoriesManager categories={categories} />;
 }
 
-export const metadata = { title: "Work Areas | Request Wave" };
+export const metadata = { title: "Work Areas | Output Overview" };

@@ -38,4 +38,4 @@ export default async function RequestsPage({
   );
 }
 
-export const metadata = { title: "Requests | Request Wave" };
+export const metadata = { title: "Requests | Output Overview" };

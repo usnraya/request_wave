@@ -24,7 +24,7 @@ export default function TeamsClient({ requests, categories, teams }: { requests:
         <div>
           <div className="flex items-center gap-1">
             <h1 className="text-3xl font-medium tracking-tight">Teams</h1>
-            <InfoTooltip label="Teams" text="Bandingkan jumlah output selesai setiap area kerja dan bulan." />
+            <InfoTooltip label="Teams" text="Compare completed outputs by work area and month." />
           </div>
           <p className="mt-2 text-[15px] text-muted-foreground">Compare completed design activity by work area.</p>
         </div>

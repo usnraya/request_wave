@@ -28,5 +28,5 @@ export default async function TeamDetailPage({
 export async function generateMetadata({ params }: PageProps<"/teams/[teamId]">) {
   const { teamId } = await params;
   const team = (await getTeams()).find((item) => item.id === teamId);
-  return { title: team ? `${team.name} | Request Wave` : "Team | Request Wave" };
+  return { title: team ? `${team.name} | Output Overview` : "Team | Output Overview" };
 }

@@ -21,7 +21,7 @@ export default function InfoTooltip({
         openOnHover
         delay={150}
         closeDelay={100}
-        aria-label={label ? `Penjelasan: ${label}` : "Penjelasan"}
+        aria-label={label ? `Explanation: ${label}` : "Explanation"}
         className={cn(
           "inline-flex size-5 shrink-0 cursor-help items-center justify-center rounded-full text-muted-foreground/70 outline-none transition-colors hover:text-foreground data-[popup-open]:text-foreground focus-visible:ring-2 focus-visible:ring-ring/40",
           className,

@@ -115,7 +115,7 @@ export default function MarkdownImportForm({
           className="mt-1.5 block w-full cursor-pointer text-[13px] file:mr-3 file:h-10 file:cursor-pointer file:rounded-full file:border file:border-border file:bg-background file:px-4 file:text-[13px] file:font-medium hover:file:border-primary"
         />
         <span className="mt-1 block text-xs font-normal text-muted-foreground">
-          Format: ID | Task | Lokasi | Area | Output. Deadline is optional and ignored; every row uses the selected month. Team comes from Lokasi, category from Area.
+          Format: ID | Task | Location | Work Area | Output. Deadline is optional and ignored; every row uses the selected month. Team comes from Location, category from Work Area.
           {onlyTeamId && " Only this team's rows are imported."}
         </span>
       </label>
@@ -140,7 +140,7 @@ export default function MarkdownImportForm({
                   <th className="px-3 py-2 font-medium">ID</th>
                   <th className="px-3 py-2 font-medium">Title</th>
                   <th className="px-3 py-2 font-medium">Team</th>
-                  <th className="px-3 py-2 font-medium">Area</th>
+                  <th className="px-3 py-2 font-medium">Work Area</th>
                   <th className="px-3 py-2 text-right font-medium">Output</th>
                   <th className="px-3 py-2 font-medium">Status</th>
                 </tr>

@@ -27,7 +27,7 @@ export default function TrendChart({ months }: { months: MonthPoint[] }) {
     <DashboardCard
       title="Outputs Trend"
       subtitle={`All teams · ${total} outputs total · avg ${avg}/month`}
-      help="Grafik naik-turunnya jumlah output selesai tiap bulan. Batang tertinggi adalah bulan paling sibuk."
+      help="Chart of completed outputs each month. The tallest bar is the busiest month."
     >
       <div className="min-h-[220px] overflow-x-auto">
         <svg
