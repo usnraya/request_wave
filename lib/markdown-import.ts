@@ -7,6 +7,7 @@ export const maxMarkdownRows = 200;
 const categoryAliases = new Map([
   ["campaign/event", "campaign / event"],
   ["property event / merchandise", "merchandise / property event"],
+  ["admin / teacher support", "teacher support"],
 ]);
 
 export type MarkdownSourceRow = {
